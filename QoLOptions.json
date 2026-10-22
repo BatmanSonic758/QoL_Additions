@@ -1,0 +1,1635 @@
+{
+    "Groups": [
+        {
+            "Name": "Main",
+            "DisplayName": "Animations",
+            "Elements": [
+                {
+                    "Name": "JumpPlayer",
+                    "DisplayName": "HE1-Jump Animation Cycle",
+                    "Description": [
+                        "Recreates the Hedgehog Engine 1 jump cycle, where the player springs upwards before curling into a ball, complete with short hop, long jump and hurdle animations.\n\nTap the A button for a short hop, or hold it to jump higher and curl into a ball.\n\nChoose which characters the jump cycle applies to."
+                    ],
+                    "Type": "JumpPlayer",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HurdleLongJump",
+                    "DisplayName": "Hurdle at Long Jump",
+                    "Description": [
+                        "Plays the hurdle animation when long jumping at high speed, akin to Sonic Unleashed."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "AltDoubleJump",
+                    "DisplayName": "Lost World-styled Double Jump",
+                    "Description": [
+                        "Turns the Double Jump into a mid-air somersault, akin to Sonic Lost World.\n\nPlease note:\n- The player is vulnerable to damage during the Double Jump.\n- Amy uses it by default, unless ''Jumping Hammer Attack'' is enabled or ''HE1-Jump Animation Cycle'' is set to ''All Characters''."
+                    ],
+                    "Type": "AltDoubleJump",
+                    "DefaultValue": 2
+                },
+                {
+                    "Name": "JumpDashAnimation",
+                    "DisplayName": "Homing Attack Animation",
+                    "Description": [
+                        "Choose the animation played during the Homing Attack.\n\nAlso applies to Sonic's Jump Dash."
+                    ],
+                    "Type": "JumpDashAnimation",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HomingTrickRandom",
+                    "DisplayName": "Randomize Homing Tricks",
+                    "Description": [
+                        "Shuffles the 6 Homing Trick animations instead of cycling through them in a fixed order."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "WallJumpAnimation",
+                    "DisplayName": "Restore Wall Jump Animation",
+                    "Description": [
+                        "Stops the wall jump from reusing the falling animation by restoring a proper one.\n\nChoose between the correct animation or the unused original Hedgehog Engine one."
+                    ],
+                    "Type": "WallJumpAnimation",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "GrindBoostAnim",
+                    "DisplayName": "Grind Boost Animation",
+                    "Description": [
+                        "Adds a dedicated animation when boosting on grind rails, akin to Sonic Generations."
+                    ],
+                    "Type": "GrindBoostAnim",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "FlailFalling",
+                    "DisplayName": "Flail Falling",
+                    "Description": [
+                        "Replaces the spinning animation when flung off terrain with a flailing one."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Abilities",
+            "Elements": [
+                {
+                    "Name": "LegacySpinDash",
+                    "DisplayName": "Classic-styled Spin Dash",
+                    "Description": [
+                        "Replaces the vanilla Spin Dash (SpinBoost) with the Drop Dash state, making it feel closer to its classic counterpart.\n\nInspired by Weezley's mod.\n\nPlease note:\n- The Spin Dash is unlocked from the start.\n- Unlike the vanilla Spin Dash, you cannot Spin Dash by pressing the left trigger while running.\n- Charging in the air or tilting the stick while charging can sometimes release the Spin Dash in the opposite direction."
+                    ],
+                    "Type": "LegacySpinDash",
+                    "DefaultValue": 3
+                },
+                {
+                    "Name": "WallDashAbility",
+                    "DisplayName": "Spin Dash on Walls",
+                    "Description": [
+                        "Requires:\n- ''Classic-styled Spin Dash''.\n\nExclusive to Sonic and Knuckles!!! — pun totally intended :)\n\nCharge and release a Spin Dash while climbing to scale or launch off walls faster.\n\nPlease note:\n- Only works on Open Zone climbable walls, not 2D wall jump sections.\n- Sonic and Knuckles can sometimes slide down while charging.\n- Technically works for Tails and Amy, but they can't climb by default."
+                    ],
+                    "Type": "WallDashAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "RollAbility",
+                    "DisplayName": "Roll over Slide",
+                    "Description": [
+                        "Replaces the redundant slide with a roll you can perform at will, similar to Sonic Adventure.\n\nWhile running, press the B button to roll and gain speed.\n\nPlease note, this may conflict with other B button moves, such as Amy's Hammer Spin or Sonic's Drift when mapped to the B button."
+                    ],
+                    "Type": "RollAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "BrakeAbility",
+                    "DisplayName": "Brake",
+                    "Description": [
+                        "Recreates the brake mechanic from previous titles.\n\nWhen braking at high speed, the player skids and gradually slows to a complete stop.\nAt lower speeds, the player turns around instead, as in vanilla Sonic Frontiers."
+                    ],
+                    "Type": "BrakeAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "FriendsDoubleJump",
+                    "DisplayName": "Friends' Abilities over Double Jump",
+                    "Description": [
+                        "Replaces Tails, Knuckles and Amy's Double Jump with their signature abilities."
+                    ],
+                    "Type": "FriendsDoubleJump",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HomingSpam",
+                    "DisplayName": "Spammable Homing Attack",
+                    "Description": [
+                        "Chain Homing Attacks back-to-back without the recovery delay, keeping air combos and target chains fast and fluid.\n\nPlease note, this does not affect Sonic's Jump Dash."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "AirBoostPhysics",
+                    "DisplayName": "Air Boost Behavior",
+                    "Description": [
+                        "Choose how the Air Boost handles, based on previous boost titles."
+                    ],
+                    "Type": "AirBoostPhysics",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "ForcesBoostJump",
+                    "DisplayName": "Forces Boost Jump",
+                    "Description": [
+                        "Recreates the Boost Jump from Sonic Forces.\n\nPairs best with ''Air Boost Behavior'' set to ''Sonic Forces''."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "SkyDiveAbility",
+                    "DisplayName": "Manual Sky Dive",
+                    "Description": [
+                        "Sky Dive at any time instead of only during scripted events, inspired by many 3D Sonic fan games.\n\nWhile airborne, press the right analog stick to start skydiving.\n\nPlease note:\n- The automated Sky Dive camera still applies.\n- Conflicts with the Extended Photo Mode code."
+                    ],
+                    "Type": "SkyDiveAbility",
+                    "DefaultValue": 1
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Miscellaneous",
+            "Elements": [
+                {
+                    "Name": "BoostAura",
+                    "DisplayName": "Boost Aura",
+                    "Description": [
+                        "Adds a boost aura based on The Final Horizon's Rocket Boost, styled after Sonic Forces and Shadow Generations to match the Hedgehog Engine 2 look.\n\nTurn this off if you want to use a different boost aura, such as Boost Aura P2."
+                    ],
+                    "Type": "BoostAura",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "JumpDashTrail",
+                    "DisplayName": "Show Trail",
+                    "Description": [
+                        "Displays a trail effect when performing a Homing Attack, Stomping or rolling.\n\nChoose whether the trail keeps following the player or only appears during those moves."
+                    ],
+                    "Type": "JumpDashTrail",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "JumpSpinSound",
+                    "DisplayName": "Enable Spinning Sound",
+                    "Description": [
+                        "Adds the spinning sound heard when bouncing off enemies to jump ball moves, such as jumping and bouncing.\n\nPlease note:\n- The Double Jump is excluded.\n- Since Amy doesn't normally curl into a ball, she only gets it when jumping out of a Spin Dash or roll, unless ''HE1-Jump Animation Cycle'' is set to ''All Characters''."
+                    ],
+                    "Type": "JumpSpinSound",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "JumpboardBoostVoice",
+                    "DisplayName": "Jump Panel Boost Grunt",
+                    "Description": [
+                        "Plays a randomized grunt when boosting off a Jump Panel, akin to Sonic Colors."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "CameraFOV",
+                    "DisplayName": "Field of View",
+                    "Description": [
+                        "Adjusts how the camera's Field of View reacts to your speed during gameplay."
+                    ],
+                    "Type": "CameraFOV",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "StartEmptyGauge",
+                    "DisplayName": "Always Start with Empty Boost Gauge",
+                    "Description": [
+                        "Start every Cyber Space level with an empty Boost Gauge, like in Sonic Unleashed, Colors and Forces.\n\nAlso applies to Cyber Space Challenges.\n\nPlease note, this only affects Cyber Space:\n- The Boost Gauge already empties upon dying by default.\n- Respawning in the Open Zone still costs rings, depending on your difficulty.\n- Battle Rush, Master King's Trials and Super Sonic boss fights are unaffected."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "LightDashRename",
+                    "DisplayName": "Use Light Speed Dash Text",
+                    "Description": [
+                        "Renames the Light Dash to Light Speed Dash throughout the UI."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "true"
+                },
+                {
+                    "Name": "SA2ShoesName",
+                    "DisplayName": "Sonic Adventure 2 Shoes Name",
+                    "Description": [
+                        "Choose which name to use for the Sonic Adventure 2 Shoes in the Extras menu."
+                    ],
+                    "Type": "SA2ShoesName",
+                    "DefaultValue": 4
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Sonic",
+            "Elements": [
+                {
+                    "Name": "JumpDashAbility",
+                    "DisplayName": "Jump Dash",
+                    "Description": [
+                        "A faithful recreation of the long-lost ability, the Jump Dash, that has been overshadowed by the Double Jump and a scripted Homing Attack.\n\nInstead of relying on the Air Boost, this ability allows Sonic to curl into a ball and dash forward, very useful for platforming and to build up speed and keep horizontal momentum.\n\nChoose from a variety of options to set up your own preference."
+                    ],
+                    "Type": "JumpDashAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "BounceAttackAbility",
+                    "DisplayName": "Bounce Attack / Bounce Bracelet",
+                    "Description": [
+                        "Replaces Sonic's\nStomping Attack with a now properly functioning\nBounce Attack\n(or Bounce Bracelet).\n\nThis ability allows Sonic to curl into a ball and dash downwards and bounce when colliding with the ground to gain more height and reach higher platforms.\n\nOr just to show off...\n\nChoose from a variety of options to set up your own preference."
+                    ],
+                    "Type": "BounceAttackAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "Drift",
+                    "DisplayName": "Manual Drift",
+                    "Description": [
+                        "Restores and fixes Sonic's semi-unused drift mechanic, allowing him to use it at any given moment outside of Portal 3-5: BMB or the use of the Drift Dash Panels.\n\nSonic's drift can allow him to take sharper turns for correcting directions and deal some damage to enemies.\n\nChoose from a variety of options to set up your own preference.\n\nNote(s):\n- Due to how the drift state is programmed, you can sometimes get Sonic run straight when just positioning the analog stick upwards or something.\n- This does not add a drift camera tilt like Amy's."
+                    ],
+                    "Type": "Drift",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "SweepkickAbility",
+                    "DisplayName": "Foot Sweep / Sweepkick",
+                    "Description": [
+                        "A recreation of the Foot Sweep (or Sweepkick) attack from Sonic Unleashed.\n\nPress the B button twice while crouching or moving to allow Sonic to perform a sweep kick. This attack is effective for knocking enemies off balance."
+                    ],
+                    "Type": "SweepkickAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "SweepkickSound",
+                    "DisplayName": "Original Foot Sweep / Sweepkick Sound",
+                    "Description": [
+                        "Ports the Foot Sweep / Sweepkick sound from Sonic Unleashed."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "StateAwakening",
+                    "DisplayName": "Alternative Power Boost Cutscene",
+                    "Description": [
+                        "Replaces Sonic's Power Boost cutscene with an unused real-time variant (Sonic literally jumpscares you).\n\nThis does not play the final cutscene in real-time.\n\nEnsure that Power Boost Scene is set to off in the game settings."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "CyberCorruptionAlt",
+                    "DisplayName": "Cyber Corruption Alterations",
+                    "Description": [
+                        "Alters Sonic’s running animations based on his current Cyber Corruption state."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "CyberSpaceRun",
+                    "DisplayName": "Customizable Running Cycle",
+                    "Description": [
+                        "Choose different running animations for Sonic."
+                    ],
+                    "Type": "CyberSpaceRun",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "SonicNoJumpStomp",
+                    "DisplayName": "Disable Jump Stomp",
+                    "Description": [
+                        "Disables Sonic being able to Jump Stomp, allowing him to simply land after a stomp."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Sonic - Jump Dash Settings",
+            "Elements": [
+                {
+                    "Name": "JumpDashExitAnimation",
+                    "DisplayName": "Uncurl Animation",
+                    "Description": [
+                        "Define the exit animation style after performing a Jump Dash."
+                    ],
+                    "Type": "JumpDashExitAnimation",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "JumpDashStyle",
+                    "DisplayName": "Gameplay Style",
+                    "Description": [
+                        "Define the gameplay style for the Jump Dash."
+                    ],
+                    "Type": "JumpDashStyle",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "JumpDashHoming",
+                    "DisplayName": "Homing Attack / Reticle Behavior",
+                    "Description": [
+                        "Define the Homing Attack / Homing Reticle behavior during the Jump Dash."
+                    ],
+                    "Type": "JumpDashHoming",
+                    "DefaultValue": 2
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Sonic - Drift Settings",
+            "Elements": [
+                {
+                    "Name": "DriftInput",
+                    "DisplayName": "Input",
+                    "Description": [
+                        "Define the input for when performing the Drift."
+                    ],
+                    "Type": "DriftInput",
+                    "DefaultValue": 4
+                },
+                {
+                    "Name": "DriftAnimation",
+                    "DisplayName": "Animation Style",
+                    "Description": [
+                        "Define the animation style for the Drift."
+                    ],
+                    "Type": "DriftAnimation",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "DriftGauge",
+                    "DisplayName": "Refill Boost Gauge by Drifting",
+                    "Description": [
+                        "Recreates the boost gauge replenishment by drifting mechanic from Sonic Unleashed and Generations."
+                    ],
+                    "Type": "DriftGauge",
+                    "DefaultValue": 1
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Sonic - Bounce Attack Settings",
+            "Elements": [
+                {
+                    "Name": "BounceAttackAnimation",
+                    "DisplayName": "Animation Style",
+                    "Description": [
+                        "Define the animation style for the Bounce Attack."
+                    ],
+                    "Type": "BounceAttackAnimation",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "BounceAttackStyle",
+                    "DisplayName": "Gameplay Style",
+                    "Description": [
+                        "Define the gameplay style for the Bounce Attack."
+                    ],
+                    "Type": "BounceAttackStyle",
+                    "DefaultValue": 1
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Tails",
+            "Elements": [
+                {
+                    "Name": "TailSwipeAbility",
+                    "DisplayName": "Tail Swipe",
+                    "Description": [
+                        "A recreation of Tails' Tail Swipe from Sonic Adventure.\n\nPress the X button while standing, moving or airborne to make Tails spin around with a powerful tail whip. This quick attack knocks back nearby enemies."
+                    ],
+                    "Type": "TailSwipeAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "FlightMeter",
+                    "DisplayName": "Flight Gauge",
+                    "Description": [
+                        "Replaces Tails' flight timer with a dynamic Flight Gauge, inspired by a scrapped mechanic from\nSONIC THE HEDGEHOG (2006), and its fan remake P-06.\n\nWhile flying, the gauge gradually depletes, draining faster when flying upwards.\n\nOnce depleted, Tails will automatically descend until the gauge is refilled.\n\nThe Flight Gauge fully recharges upon landing, allowing Tails to take off again after touching the ground."
+                    ],
+                    "Type": "FlightMeter",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "TailsHoming",
+                    "DisplayName": "Restore Homing Attack Skill",
+                    "Description": [
+                        "Restores Tails' unused Homing Attack Skill to be on par with Knuckles and Amy.\n\nPlease note:\n- Unless Disable Wrench Attack Skill is enabled, it does not disable the Wrench Attack, thus Tails may throw wrenches sometimes during a Homing Attack.\n- Since Tails' Homing Attack Skill is missing a proper Training Simulator, it will send you to random Training Simulators.\n- Tails can't do a Homing Attack from the ground like Knuckles and Amy unless Disable Wrench Attack Skill is enabled."
+                    ],
+                    "Type": "TailsHoming",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "TailsSpannerStop",
+                    "DisplayName": "Disable Wrench Attack Skill [EXPERIMENTAL]",
+                    "Description": [
+                        "Disables Tails' Wrench Attack Skill.\n\nPlease note:\n- This option locks the Wrench Attack Skill rather than removing them entirely. You must unlock the Wrench Attack in the Skill Tree to use it again.\n- Both the regular Wrench Attack and Charged Wrench Attack are affected."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Knuckles",
+            "Elements": [
+                {
+                    "Name": "ScrewdriverAbility",
+                    "DisplayName": "Screwdriver",
+                    "Description": [
+                        "Repurposes Knuckles' Drill Spin Attack with a recreation of the Screwdriver move from SONIC THE HEDGEHOG (2006).\n\nWhile standing, hold down the X button to allow Knuckles to charge up a Screwdriver.\n\nWhen released, Knuckles will launch himself upwards and slowly descend.\n\nThe longer Knuckles charges, the further he'll go.\n\nIf you release while the Homing Reticle is on-screen, Knuckles will automatically charge towards that target. Release at full charge to initiate the Drill Spin Attack.\n\nPlease note, this does not require the Drill Spin Attack to be unlocked beforehand!"
+                    ],
+                    "Type": "ScrewdriverAbility",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "KnuxLegacyGlide",
+                    "DisplayName": "Pre-Patched Glide Startup",
+                    "Description": [
+                        "Restores Knuckles' original glide startup animation from version 1.40."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "KnuxLegacyInfiniteGlide",
+                    "DisplayName": "Pre-Patched Infinite Glide Startup",
+                    "Description": [
+                        "Restores Knuckles' original Infinite Glide startup animation from version 1.40."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                }
+            ]
+        },
+        {
+            "Name": "Main",
+            "DisplayName": "Amy",
+            "Elements": [
+                {
+                    "Name": "ShowHammer",
+                    "DisplayName": "Display Hammer at High Speed",
+                    "Description": [
+                        "Displays Amy's Piko Piko Hammer during gameplay when she's at a high speed, like in Sonic Adventure."
+                    ],
+                    "Type": "ShowHammer",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HammerAttack",
+                    "DisplayName": "Hammer Combat",
+                    "Description": [
+                        "Reimagines Amy’s melee combat around various Piko Piko Hammer attacks, inspired by her movesets from Sonic Adventure and fan-made interpretations such as Sonic P-06 and Extra Slot Amy for Sonic 3 A.I.R., while remaining faithful to Sonic Frontiers’ gameplay style.\n\nThis does not disable Amy’s Tarot Card abilities. She can still use abilities such as Multi-Lock, Card Spin, Card Stomp (unless Hammer Stomp is active), and Card Float.\n\nPlease note, the Homing Attack is disabled by default (except in specific circumstances), since Amy’s attacks already utilize the X button. Amy’s lack of a traditional Homing Attack should not make challenges or bosses unbeatable, as Multi-Lock can be used as an alternative for reaching airborne or distant targets\n\nControl Scheme:\n- Ground + X Button: Hammer Attack\n- Airborne + X Button: Aerial Hammer Attack\n- Ground + Hold X Button: Hammer Bounce\n- Run + Hold B Button: Hammer Spin"
+                    ],
+                    "Type": "HammerAttack",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HammerStomp",
+                    "DisplayName": "Hammer Stomp",
+                    "Description": [
+                        "Replaces Amy’s Card Stomp with a Piko Piko Hammer-based variant."
+                    ],
+                    "Type": "HammerStomp",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HammerJump",
+                    "DisplayName": "Hammer Jump",
+                    "Description": [
+                        "Recreates Amy’s Hammer Jump from Sonic Adventure."
+                    ],
+                    "Type": "HammerJump",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HammerJumpAttack",
+                    "DisplayName": "Jumping Hammer Attack",
+                    "Description": [
+                        "Enlarges Amy's double jump hitbox by having her spin her hammer around her, similar to Sonic Origins / Superstars."
+                    ],
+                    "Type": "HammerJumpAttack",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "HammerRush",
+                    "DisplayName": "Hammer Rush",
+                    "Description": [
+                        "A recreation of the Hammer Rush from Sonic Origins / Superstars.\n\nWhile running, Amy will perform continuous hammer attacks and damage everything in her path."
+                    ],
+                    "Type": "HammerRush",
+                    "DefaultValue": 1
+                },
+                {
+                    "Name": "AmyLightDash",
+                    "DisplayName": "Enable Light Dash [EXPERIMENTAL]",
+                    "Description": [
+                        "Allows Amy to use the Light Dash like in Sonic Dream Team.\n\nPlease note, Amy can always Light Dash with a press of the left stick every time rather than when near a trail of rings."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
+                    "Name": "AmyBoostStop",
+                    "DisplayName": "Disable Boost",
+                    "Description": [
+                        "Disables Amy’s standard boost, giving her an authentic Sonic Adventure-style feel.\n\nDoes not affect her Card Spin Boost."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                }
+            ]
+        }
+    ],
+    "Enums": {
+        "JumpAnimation": [
+            {
+                "DisplayName": "Fluid",
+                "Value": "1",
+                "Description": [
+                    "Gives the player an initial jumping and short hop animation before curling into a ball."
+                ]
+            },
+            {
+                "DisplayName": "2006",
+                "Value": "2",
+                "Description": [
+                    "The player sends their body upwards and then curls into a ball, like SONIC THE HEDGEHOG (2006)."
+                ]
+            },
+            {
+                "DisplayName": "Classic",
+                "Value": "3",
+                "Description": [
+                    "The player immediately enters the jump ball without an initial jumping nor short hop animation."
+                ]
+            }
+        ],
+        "JumpPlayer": [
+            {
+                "DisplayName": "Exclude Amy",
+                "Value": "1",
+                "Description": [
+                    "Gives Sonic, Tails and Knuckles the jump up and short hop animations, inspired by previous boost titles."
+                ]
+            },
+            {
+                "DisplayName": "All Characters",
+                "Value": "2",
+                "Description": [
+                    "Gives all characters the jump up and short hop animations, inspired by previous boost titles."
+                ]
+            }
+        ],
+        "JumpSpinSound": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the spin jump sound."
+                ]
+            },
+            {
+                "DisplayName": "Enable + Spin States",
+                "Value": "2",
+                "Description": [
+                    "Enables the spin jump sound and adds it to the various Spin states."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "Disables the spin jump sound."
+                ]
+            }
+        ],
+        "JumpDashAnimation": [
+            {
+                "DisplayName": "Jump Ball",
+                "Value": "1",
+                "Description": [
+                    "The Jump Ball bounce animation effect will play during a Homing Attack, staying true to Sonic Frontiers."
+                ]
+            },
+            {
+                "DisplayName": "Jump Ball (Charge)",
+                "Value": "5",
+                "Description": [
+                    "The Spin Dash charge animation effect will play during a Homing Attack."
+                ]
+            },
+            {
+                "DisplayName": "Roll",
+                "Value": "2",
+                "Description": [
+                    "A roll animation will play during a Homing Attack, similar to previous titles."
+                ]
+            }
+        ],
+        "JumpDashExitAnimation": [
+            {
+                "DisplayName": "Default",
+                "Value": "1",
+                "Description": [
+                    "Sonic will use the default fall animation when exiting from a Jump Dash."
+                ]
+            },
+            {
+                "DisplayName": "Somersault",
+                "Value": "3",
+                "Description": [
+                    "Sonic will do a somersault animation when exiting from a Jump Dash to simulate an animation sync.\n\nMight look off when using animation mods."
+                ]
+            }
+        ],
+        "JumpDashStyle": [
+            {
+                "DisplayName": "Unleashed (Long)",
+                "Value": "1",
+                "Description": [
+                    "Sonic's Jump Dash will traverse for a longer distance.\n\nRecommended for those who prefer to build up speed and carry more of Sonic's momentum."
+                ]
+            },
+            {
+                "DisplayName": "Generations (Short)",
+                "Value": "2",
+                "Description": [
+                    "Sonic's Jump Dash will traverse a shorter distance while losing all of his forward momentum during the process.\n\nRecommended for those who are casually having trouble with platforming."
+                ]
+            },
+            {
+                "DisplayName": "Curved",
+                "Value": "3",
+                "Description": [
+                    "Sonic's Jump Dash is curved and carries his momentum at the disadvantage of gradually losing speed when uncurling and the Jump Dash lasting for a short period of time.\n\nRecommended for those who prefer a mix of speed and platforming."
+                ]
+            }
+        ],
+        "JumpDashInput": [
+            {
+                "DisplayName": "X Button",
+                "Value": "1",
+                "Description": [
+                    "Maps Sonic's Jump Dash to the\nX Button, staying true to Sonic Frontiers' control scheme.\n\nRecommended for those who want more control over Sonic without interruptions or limitations."
+                ]
+            },
+            {
+                "DisplayName": "A Button",
+                "Value": "2",
+                "Description": [
+                    "Maps Sonic's Jump Dash to the\nA Button, like in the majority of the games.\n\nRecommended for those who prefer the traditional legacy Homing Attack and classic gameplay experience.\n\nNote(s):\n- Sonic cannot Double Jump with this option enabled.\n- An obvious one, Sonic's Homing Attack is also mapped to the A button.\n- Sonic cannot perform a Homing Attack when grounded, only when in the air.\n\nKnown issues:\n- Sonic can sometimes perform the Homing Attack the original way.\n- On some occasions, Sonic's Homing Attack may be spammable.\n- This option conflicts with the Spin Slash Skill."
+                ]
+            }
+        ],
+        "JumpDashAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Jump Dash ability for Sonic."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Jump Dash ability for Sonic."
+                ]
+            }
+        ],
+        "JumpDashHoming": [
+            {
+                "DisplayName": "Default",
+                "Value": "1",
+                "Description": [
+                    "During a Jump Dash, Sonic will not be able to perform a Homing Attack when the Homing Reticle appears."
+                ]
+            },
+            {
+                "DisplayName": "Automatic",
+                "Value": "2",
+                "Description": [
+                    "During a Jump Dash, Sonic will automatically transition into a Homing Attack when locking on to a nearby object — similar to Shadow the Hedgehog (2005).\n\nPlease note, Sonic will enter the Homing Attack ONLY if he's in the roll animation."
+                ]
+            }
+        ],
+        "JumpDashTrail": [
+            {
+                "DisplayName": "Long",
+                "Value": "1",
+                "Description": [
+                    "The trail will continue to follow the player, similar to Sonic Unleashed."
+                ]
+            },
+            {
+                "DisplayName": "Short",
+                "Value": "2",
+                "Description": [
+                    "The trail will only appear during the moves listed above."
+                ]
+            }
+        ],
+        "AirBoostPhysics": [
+            {
+                "DisplayName": "Sonic Frontiers",
+                "Value": "1",
+                "Description": [
+                    "The Air Boost remains unchanged."
+                ]
+            },
+            {
+                "DisplayName": "Sonic Forces",
+                "Value": "2",
+                "Description": [
+                    "The Air Boost is floaty and descends slower, akin to Sonic Forces."
+                ]
+            },
+            {
+                "DisplayName": "Sonic Generations",
+                "Value": "3",
+                "Description": [
+                    "The Air Boost sends you further, but is also short, akin to Sonic Generations."
+                ]
+            }
+        ],
+        "BounceAttackAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Bounce Attack ability for Sonic."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Bounce Attack ability for Sonic."
+                ]
+            }
+        ],
+        "AltDoubleJump": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Lost World-styled Double Jump for Sonic."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Lost World-styled Double Jump."
+                ]
+            }
+        ],
+        "SweepkickAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Foot Sweep / Sweepkick for Sonic."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Foot Sweep / Sweepkick."
+                ]
+            }
+        ],
+        "CyberSpaceRun": [
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "Sonic's running cycle remains unchanged."
+                ]
+            },
+            {
+                "DisplayName": "Sonic Generations",
+                "Value": "1",
+                "Description": [
+                    "Ports Sonic's dash and jet animations from Sonic Generations, with his hands wide open."
+                ]
+            },
+            {
+                "DisplayName": "Sonic Unleashed",
+                "Value": "2",
+                "Description": [
+                    "Ports Sonic's dash and jet animations from Sonic Unleashed, with his hands clenched into fists.\nThis option does not play the boost animation."
+                ]
+            }
+        ],
+        "TailSwipeAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Tail Swipe for Tails."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Tail Swipe."
+                ]
+            }
+        ],
+        "FlightMeter": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Flight Gauge."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Tails' flight will have the traditional 10 second window."
+                ]
+            }
+        ],
+        "TailsHoming": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Restores Tails' Homing Attack."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Tails will not perform a Homing Attack."
+                ]
+            }
+        ],
+        "ScrewdriverAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Screwdriver for Knuckles."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Screwdriver."
+                ]
+            }
+        ],
+        "KnucklesCombat": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "KnuxSonicBoom": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "KnuxWildRush": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "KnuxHomingShot": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "KnuxLoopKick": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "KnuxCrossSlash": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Knuckles' Combat Overhaul."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Knuckles' Combat Overhaul."
+                ]
+            }
+        ],
+        "BoostAura": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Boost Aura."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Boost Aura.\n\nIf you wish to use a different boost aura, like Boost Aura P2, turn this option off."
+                ]
+            }
+        ],
+        "BounceAttackAnimation": [
+            {
+                "DisplayName": "Jump Ball",
+                "Value": "1",
+                "Description": [
+                    "The Jump Ball animation effect will play during Sonic's Bounce Attack."
+                ]
+            },
+            {
+                "DisplayName": "Roll",
+                "Value": "2",
+                "Description": [
+                    "A roll animation will play during Sonic's Bounce Attack, similar to SONIC THE HEDGEHOG (2006)."
+                ]
+            }
+        ],
+        "BounceAttackStyle": [
+            {
+                "DisplayName": "Adventure 2",
+                "Value": "1",
+                "Description": [
+                    "The Bounce Attack will behave like it did in Sonic Adventure 2.\n\nSonic will preserve all his forward momentum as he dives and bounces."
+                ]
+            },
+            {
+                "DisplayName": "2006",
+                "Value": "2",
+                "Description": [
+                    "The Bounce Attack will behave like it did in SONIC THE HEDGEHOG (2006).\nSonic loses all his forward momentum and can move slightly."
+                ]
+            },
+            {
+                "DisplayName": "Lost World",
+                "Value": "3",
+                "Description": [
+                    "The Bounce Attack will behave like it did in Sonic Lost World.\nSonic loses all his forward momentum and can move slightly, and is limited to three bounces, uncurling after the third."
+                ]
+            }
+        ],
+        "LegacySpinDash": [
+            {
+                "DisplayName": "Enable (Mash)",
+                "Value": "1",
+                "Description": [
+                    "Enables the Classic-styled Spin Dash.\n\nMash the charge button to release a faster Spin Dash, like the Classic games."
+                ]
+            },
+            {
+                "DisplayName": "Enable (Hold)",
+                "Value": "2",
+                "Description": [
+                    "Enables the Classic-styled Spin Dash.\n\nHold down the charge button to gradually build up speed and release a faster Spin Dash, like the Adventure games."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "The Spin Dash remains unchanged."
+                ]
+            }
+        ],
+        "RollAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Roll over Slide ability."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Roll over Slide ability."
+                ]
+            }
+        ],
+        "WallDashAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Spin Dash on Walls."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Spin Dash on Walls."
+                ]
+            }
+        ],
+        "ChargeOnlySpinDash": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Disables the instant Spin Dash."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "The instant Spin Dash remains unchanged."
+                ]
+            }
+        ],
+        "FriendsDoubleJump": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Replaces the other characters' Double Jump with their respective abilities."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "The Double Jump remains unchanged."
+                ]
+            }
+        ],
+        "SkyDiveAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Sky Dive ability."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Sky Dive ability."
+                ]
+            }
+        ],
+        "BrakeAbility": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Brake ability."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Brake ability."
+                ]
+            }
+        ],
+        "GrindTrick": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Grind Tricks."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Grind Tricks."
+                ]
+            }
+        ],
+        "GrindTrickAnimation": [
+            {
+                "DisplayName": "Common Trick",
+                "Value": "1",
+                "Description": [
+                    "Each character will have a common animation which will have them do a spin on the grind rail as they trick.\n\nNote, Tails, Knuckles and Amy use a different animation as opposed to Sonic due to lacking the majority of his animations."
+                ]
+            },
+            {
+                "DisplayName": "Characteristic Trick",
+                "Value": "2",
+                "Description": [
+                    "Each character will have a signature grind trick animation that suits their characteristic best.\n\nIn this option, Amy's grind trick animation will have her blowing a kiss."
+                ]
+            },
+            {
+                "DisplayName": "Characteristic Trick (Alt)",
+                "Value": "3",
+                "Description": [
+                    "Each character will have a signature grind trick animation that suits their characteristic best.\n\nIn this option, Amy's grind trick animation will have her twirling around."
+                ]
+            }
+        ],
+        "GrindBoostAnim": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Grind Boost Animation."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Grind Boost Animation."
+                ]
+            }
+        ],
+        "WallJumpAnimation": [
+            {
+                "DisplayName": "Correct",
+                "Value": "1",
+                "Description": [
+                    "Restores Sonic's wall jump animation by using the correct one."
+                ]
+            },
+            {
+                "DisplayName": "Alternative",
+                "Value": "2",
+                "Description": [
+                    "Restores the unused original Hedgehog Engine wall jump animation (wall_fly)."
+                ]
+            },
+            {
+                "DisplayName": "Alternative (Faster Flail)",
+                "Value": "3",
+                "Description": [
+                    "Restores the unused original Hedgehog Engine wall jump animation (wall_fly), with faster flail time akin to Sonic Generations."
+                ]
+            }
+        ],
+        "GrindStumble": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables the Grind Stumble."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables the Grind Stumble."
+                ]
+            }
+        ],
+        "Drift": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Sonic's Drift."
+                ]
+            },
+            {
+                "DisplayName": "Enable (Cyber Space Only)",
+                "Value": "2",
+                "Description": [
+                    "Enables Sonic's Drift only in Cyber Space."
+                ]
+            },
+            {
+                "DisplayName": "Enable (Open Zone Only)",
+                "Value": "3",
+                "Description": [
+                    "Enables Sonic's Drift only in Open Zone."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "4",
+                "Description": [
+                    "Disables Sonic's Drift."
+                ]
+            }
+        ],
+        "DriftInput": [
+            {
+                "DisplayName": "B Button",
+                "Value": "1",
+                "Description": [
+                    "Sonic's drift will initiate by holding down the B button while running.\n\nPlease note, it may cause conflicts with Roll over Slide."
+                ]
+            },
+            {
+                "DisplayName": "Left Stick",
+                "Value": "2",
+                "Description": [
+                    "Sonic's drift will initiate by holding down the Left Stick while running."
+                ]
+            },
+            {
+                "DisplayName": "Right Trigger + B Button",
+                "Value": "3",
+                "Description": [
+                    "Sonic's drift will initiate by a button combination while running, similar to Super Sonic / like it was intended."
+                ]
+            },
+            {
+                "DisplayName": "Left Trigger",
+                "Value": "4",
+                "Description": [
+                    "Sonic's drift will initiate by holding down the left trigger while running, very much like Sonic Unleashed and Generations.\n\nPlease note, Sonic cannot Spin Dash while running due to the Drift being mapped over the left trigger.\nHe can only initiate a Spin Dash by charging beforehand!"
+                ]
+            }
+        ],
+        "DriftStyle": [
+            {
+                "DisplayName": "Refined",
+                "Value": "1",
+                "Description": [
+                    "An overhaul of Frontiers' existing drift, offering smoother turning and better overall control."
+                ]
+            },
+            {
+                "DisplayName": "Generations",
+                "Value": "2",
+                "Description": [
+                    "Sonic's drift will control similarly to Sonic Generations, providing a more controlled and precise drifting experience."
+                ]
+            },
+            {
+                "DisplayName": "Unleashed",
+                "Value": "3",
+                "Description": [
+                    "Sonic's drift will control similarly to Sonic Unleashed, offering a more aggressive and loose drift, suitable for high-speed cornering."
+                ]
+            },
+            {
+                "DisplayName": "Frontiers",
+                "Value": "4",
+                "Description": [
+                    "Sonic's drift will control similarly to Amy's Tarot Card Spin Boost, offering a more aggressive and loose drift, suitable for high-speed cornering."
+                ]
+            }
+        ],
+        "DriftStyleCyber": [
+            {
+                "DisplayName": "Refined",
+                "Value": "1",
+                "Description": [
+                    "An overhaul of Frontiers' existing drift, offering smoother turning and better overall control."
+                ]
+            },
+            {
+                "DisplayName": "Generations",
+                "Value": "2",
+                "Description": [
+                    "Sonic's drift will control similarly to Sonic Generations, providing a more controlled and precise drifting experience."
+                ]
+            },
+            {
+                "DisplayName": "Unleashed",
+                "Value": "3",
+                "Description": [
+                    "Sonic's drift will control similarly to Sonic Unleashed, offering a more aggressive and loose drift, suitable for high-speed cornering."
+                ]
+            },
+            {
+                "DisplayName": "Frontiers",
+                "Value": "4",
+                "Description": [
+                    "Sonic's drift will control similarly to Amy's Tarot Card Spin Boost, offering a more aggressive and loose drift, suitable for high-speed cornering."
+                ]
+            }
+        ],
+        "DriftGauge": [
+            {
+                "DisplayName": "Enabled",
+                "Value": "1",
+                "Description": [
+                    "Sonic will gain boost energy by drifting."
+                ]
+            },
+            {
+                "DisplayName": "Disabled",
+                "Value": "2",
+                "Description": [
+                    "Sonic will not gain boost energy by drifting."
+                ]
+            }
+        ],
+        "DriftAnimation": [
+            {
+                "DisplayName": "Default",
+                "Value": "1",
+                "Description": [
+                    "Sonic will use his default Drift animation."
+                ]
+            },
+            {
+                "DisplayName": "Spin Dash (Generations-styled)",
+                "Value": "2",
+                "Description": [
+                    "Sonic will curl into a ball while drifting, similar to Sonic Generations.\nNo jump ball effects will display, much like Generations."
+                ]
+            },
+            {
+                "DisplayName": "Spin Dash (Frontiers-styled)",
+                "Value": "3",
+                "Description": [
+                    "Sonic will curl into a ball while drifting, similar to Sonic Generations, with the Sonic Frontiers jump ball effects."
+                ]
+            }
+        ],
+        "ShowHammer": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Amy's hammer during normal gameplay outside of attacks."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Amy's hammer will only appear during combat."
+                ]
+            }
+        ],
+        "HammerAttack": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Amy's melee hammer attacks."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Amy's melee attacks remain unchanged."
+                ]
+            }
+        ],
+        "HammerStomp": [
+            {
+                "DisplayName": "Traditional",
+                "Value": "2",
+                "Description": [
+                    "Reskins Amy’s Card Stomp into Piko Piko Hammer variants. When Hammer Jump is enabled, it overrides High Card Jump."
+                ]
+            },
+            {
+                "DisplayName": "Cyhammer",
+                "Value": "1",
+                "Description": [
+                    "Redirects the Card Stomp state to the aerial Cyhammer, allowing Amy to slowly descend while freely moving around. High Card Jump is unavailable with this option."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "Restores the vanilla Card Stomp behavior."
+                ]
+            }
+        ],
+        "HammerStompAct": [
+            {
+                "DisplayName": "Cyhammer",
+                "Value": "1",
+                "Description": [
+                    "Redirects Amy's Card Stomp state to a modified aerial Cyhammer one.\n\nShe will not gain rings or any sort of goodies upon landing."
+                ]
+            },
+            {
+                "DisplayName": "Spinning Hammer Attack",
+                "Value": "2",
+                "Description": [
+                    "Replaces the stomp state with a recreation of the Spinning Hammer Attack from the Sonic Advance trilogy.\n\nAmy swings her hammer around her and spins with it and bounces upon landing."
+                ]
+            }
+        ],
+        "HammerJump": [
+            {
+                "DisplayName": "Enable (B Button)",
+                "Value": "1",
+                "Description": [
+                    "Press B during a Hammer Attack to launch Amy upward."
+                ]
+            },
+            {
+                "DisplayName": "Enable (X Button)",
+                "Value": "2",
+                "Description": [
+                    "Hold X during a Hammer Attack to launch Amy upward."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "Disables Amy's Hammer Jump."
+                ]
+            }
+        ],
+        "HammerJumpAttack": [
+            {
+                "DisplayName": "Enable",
+                "Value": "1",
+                "Description": [
+                    "Enables Amy's Jumping Hammer Attack."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "2",
+                "Description": [
+                    "Disables Amy's Jumping Hammer Attack."
+                ]
+            }
+        ],
+        "HammerRush": [
+            {
+                "DisplayName": "Classic",
+                "Value": "1",
+                "Description": [
+                    "The Hammer Rush will behave like it did in Sonic Origins / Superstars.\n\nWhen airborne, hold the left trigger to charge, and Amy will perform the Hammer Rush upon landing. Hold the left trigger while grounded to keep performing the Hammer Rush.\n\nWith this option enabled, Amy can't charge an aerial Spin Dash, only while on ground."
+                ]
+            },
+            {
+                "DisplayName": "Modern",
+                "Value": "2",
+                "Description": [
+                    "The Hammer Rush will behave in a more modern way.\n\nWhile boosting, Amy will perform the Hammer Rush as long as the Boost Gauge is at capacity."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
+                "Description": [
+                    "Disables Amy's Hammer Rush."
+                ]
+            }
+        ],
+        "CameraFOV": [
+            {
+                "DisplayName": "Enhanced",
+                "Value": "1",
+                "Description": [
+                    "The camera's FOV will dynamically zoom out as you reach higher speeds.\n\nThe faster you go, the wider the FOV becomes, giving high-speed movement a greater sense of speed and visibility."
+                ]
+            },
+            {
+                "DisplayName": "Enhanced + Boost",
+                "Value": "2",
+                "Description": [
+                    "The camera's FOV will dynamically zoom out as you reach higher speeds.\n\nUpon boosting, the FOV will zoom back in towards you, giving Boost a more noticeable change in camera perspective."
+                ]
+            },
+            {
+                "DisplayName": "Prototype",
+                "Value": "3",
+                "Description": [
+                    "The camera will maintain a closer FOV around you regardless of your speed, inspired by the early Sonic Rangers prototype."
+                ]
+            }
+        ],
+        "SA2ShoesName": [
+            {
+                "DisplayName": "SOAP Shoes",
+                "Value": "1",
+                "Description": [
+                    "Uses the iconic name inspired by the real world SOAP shoe brand."
+                ]
+            },
+            {
+                "DisplayName": "2G Hi-Speed Shoes",
+                "Value": "2",
+                "Description": [
+                    "Uses the name of the Xbox Live Avatar item."
+                ]
+            },
+            {
+                "DisplayName": "Grind Shoes",
+                "Value": "3",
+                "Description": [
+                    "Uses the name associated with Sonic X and later official Sonic media."
+                ]
+            },
+            {
+                "DisplayName": "Sonic Adventure 2 Shoes",
+                "Value": "4",
+                "Description": [
+                    "Uses the official Sonic Frontiers name."
+                ]
+            }
+        ]
+    },
+    "IniFile": "mod.ini"
+}

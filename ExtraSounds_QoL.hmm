@@ -1,0 +1,2559 @@
+Code "Lua Sound" by "Batman Sonic" does "Loads .level files related to sound"
+//
+	#include "BlackboardStatus" noemit
+	
+	#lib "Lua"
+//
+{	
+    // Credit to Weezley for the original 'Fix Another Story Stages Sound' code
+    Lua.Call("LoadLevel", "extra_sound");
+	
+    if (IS_WORLD_FLAG(IsCyberSpace))
+	{
+		// Update 3 Object SFX
+		Lua.Call("LoadLevel", "extra_cyber_sound");
+		
+	}	
+    if (!IS_WORLD_FLAG(IsCyberSpace))
+	{
+		// Cyber Space SFX for Jump Panel
+		Lua.Call("LoadLevel", "w6_sound");
+	}
+}
+
+Code "Extra Sounds (Sonic the Hedgehog)" by "Batman Sonic & SuperNova124"
+//
+    #lib "Player"
+    #lib "Sonic"
+    #lib "Lua"
+    #lib "BlackboardStatus"
+    
+    #import "Services"
+    
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Collections.Generic;
+
+    // Static lists - initialized once, not every frame
+    static List<Sonic.StateID> QuickStepStates = new List<Sonic.StateID>
+    {
+        Sonic.StateID.StateLeftStep,
+        Sonic.StateID.StateLeftStepRun,
+        Sonic.StateID.StateRightStep,
+        Sonic.StateID.StateRightStepRun,
+        Sonic.StateID.StateQuickStepLeft,
+        Sonic.StateID.StateQuickStepRight,
+        Sonic.StateID.StateQuickStepRoot,
+    };
+
+    static List<string> lightdashVoices = new List<string>{"sa1038", "sa1039", "sa1040", "sa1041", "sa1051", "sa1056"};
+    static List<string> slidingVoices = new List<string>{"sa1021_1", "sa1021_2", "sa1009", "sa1011", "sa1034", "sa1024"};
+    static List<string> quickstepVoices = new List<string>{"sa1014_1", "sa1004", "sa1005", "sa1007", "sa1009", "sa1038"};
+    static List<string> guardedflipVoices = new List<string>{"sa1047", "sa1048", "sa1049", "sa1025"};
+    static List<string> auratrainVoices = new List<string>{"sa1040", "sa1041"};
+
+    // Single Random instance
+    static Random random = new Random();
+
+    // State flags
+    static bool isAttackWindmill = false;
+    static bool isCycloneKick = false;   
+    static bool isCrossSlash = false;         
+    static bool isTakeDamage = false;    
+    static bool isTakeDamageMisc = false;   
+    static bool isBoxPush = false;      
+    static bool isBoxKick = false;      
+    static bool isSomersaultLand = false; 
+    static bool isGrindStep = false;
+    static bool isSpinJump = false;
+    static bool isDoubleJumpGrunt = false;
+    static bool isGrindJumpGrunt = false;
+    static bool isStompAttack = false;
+    static bool isStompPress = false;
+    static bool isStompBounce = false;
+    static bool isStompFlip = false;
+    static bool isSquatGrunt = false;
+    static bool isDeath = false;
+    static bool isDeathLava = false;
+    static bool isDashRamp = false;
+    static bool isTrickFinish = false;
+    static bool isDriftGrunt =  false;
+    static bool isClimbGrunt = false;
+    static bool isBreatheGrunt = false;
+    static bool isAnimalJump = false;
+    static bool isKocoJump = false;
+    static bool isPipeHotfix = false;
+    static bool isSuperSonicBrakeFix = false;
+    static bool isWallSlide = false;
+    static bool isHangPole = false;
+    static bool isLightDash = false;
+    static bool isSliding = false;
+    static bool isQuickStep = false;
+    static bool isGaurdBlock = false;
+    static bool isAuraTrain = false;
+
+//
+{
+    // Single player type check at the start
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+    
+    // Cache state IDs - call once per frame
+    var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+    var previousState = Player.State.GetPreviousStateID<Sonic.StateID>();
+    bool isSuper = BlackboardStatus.IsSuper();
+    bool isUnderwater = Player.Status.IsUnderwater();
+    string currentStageID = LevelInfo.GetCurrentStageID();
+
+    // Windmill Kick
+    if (currentState == Sonic.StateID.StateHomingFinish)
+    {
+        if (!isAttackWindmill)
+        {
+            Lua.Call("PlayVoice", "sa1013_1");
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Player.Sound.PlaySound("sn_finish_attack1");
+            isAttackWindmill = true;
+        }
+    }
+    else
+        isAttackWindmill = false;
+
+    // Cyclone Kick
+    if (currentState == Sonic.StateID.StateChargeAttack)
+    {
+        if (!isCycloneKick)
+        {
+            Lua.Call("PlayVoice", "sa1016");
+            isCycloneKick = true;
+        }
+    }
+    else
+        isCycloneKick = false;
+
+    // Cross Slash
+    if (currentState == Sonic.StateID.StateCrossSlash)
+    {
+        if (!isCrossSlash)
+        {
+            Lua.Call("PlayVoice", "sa1016");
+            isCrossSlash = true;
+        }
+    }
+    else
+        isCrossSlash = false;
+
+    // Damage
+    if (currentState == Sonic.StateID.StateDamage)
+    {
+        if (!isTakeDamage)
+        {
+            Lua.Call("PlayVoice", "sa1026");
+            isTakeDamage = true;
+        }
+    }
+    else
+        isTakeDamage = false;
+
+    // Damage (misc)
+    if (currentState == Sonic.StateID.StateDamageRunning ||
+        currentState == Sonic.StateID.StateGrindDamage ||
+        currentState == Sonic.StateID.StateGrindDamageAir ||
+        currentState == Sonic.StateID.StateDivingDamage ||
+        currentState == Sonic.StateID.StateDivingSpecialDamage)
+    {
+        if (!isTakeDamageMisc)
+        {
+            Player.Sound.PlaySound("sn_damage");
+            Lua.Call("PlayVoice", "sa1026");
+            isTakeDamageMisc = true;
+        }
+    }
+    else
+        isTakeDamageMisc = false;
+
+    // Somersault Landing
+    if (currentState == Sonic.StateID.StateSpringJumpHeadLand)
+    {
+        if (!isSomersaultLand)
+        {
+            Player.Sound.PlaySound("sn_bump_jump_roll");
+            Lua.Call("PlayVoice", "sa1009");
+            isSomersaultLand = true;
+        }
+    }
+    else
+        isSomersaultLand = false;
+
+    // Push Box
+    if (currentState == Sonic.StateID.StatePushBox)
+    {
+        if (!isBoxPush)
+        {
+            Lua.Call("PlayVoice", "sa1036");
+            isBoxPush = true;
+        }
+    }
+    else
+        isBoxPush = false;
+
+    // Kick Box
+    if (currentState == Sonic.StateID.StateKickBox)
+    {
+        if (!isBoxKick)
+        {
+            Player.Sound.PlaySound("obj_brk_standlight02");
+            Player.Sound.PlaySound("sn_attack_hit_s");
+            Player.Sound.PlaySound("sn_windmill_kick");
+            Lua.Call("PlayVoice", "sa1038");
+            isBoxKick = true;
+        }
+    }
+    else
+        isBoxKick = false;
+
+    // Grind Step
+    if (currentState == Sonic.StateID.StateGrindStep)
+    {
+        if (!isGrindStep)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1007");
+            isGrindStep = true;
+        }
+    }
+    else
+        isGrindStep = false;
+
+    // Spin Jump
+    if (currentState == Sonic.StateID.StateTreeJump)
+    {
+        if (!isSpinJump)
+        {
+            Player.Sound.PlaySound("sn_windmill_kick");
+            Lua.Call("PlayVoice", "sa1003");
+            isSpinJump = true;
+        }
+    }
+    else
+        isSpinJump = false;
+
+    // Double Jump
+    if (currentState == Sonic.StateID.StateDoubleJump)
+    {
+        if (!isDoubleJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1005");
+            isDoubleJumpGrunt = true;
+        }
+    }
+    else
+        isDoubleJumpGrunt = false;
+
+    // Grind Jump
+    if (currentState == Sonic.StateID.StateGrindJump)
+    {
+        if (!isGrindJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1003");
+            isGrindJumpGrunt = true;
+        }
+    }
+    else
+        isGrindJumpGrunt = false;
+
+    // Stomp Attack
+    if (currentState == Sonic.StateID.StateStompingDown)
+    {
+        if (!isStompAttack)
+        {
+            Player.Sound.PlaySound("_sn_stomping_start");
+            Lua.Call("PlayVoice", "sa1021_2");
+            isStompAttack = true;
+        }
+    }
+    else
+        isStompAttack = false;
+
+    // Stomping Press
+    if (currentState == Sonic.StateID.StateStompingPress)
+    {
+        if (!isStompPress)
+        {
+            Player.Sound.PlaySound("sn_collision");
+            Lua.Call("PlayVoice", "sa1016");
+            isStompPress = true;
+        }
+    }
+    else
+        isStompPress = false;
+
+    // Stomping Bounce
+    if (currentState == Sonic.StateID.StateStompingBounce)
+    {
+        if (!isStompBounce)
+        {
+            Player.Sound.PlaySound("sn_windmill_kick");
+            Lua.Call("PlayVoice", "sa1056");
+            isStompBounce = true;
+        }
+    }
+    else
+        isStompBounce = false;
+
+    // Stomp Flip
+    if (currentState == Sonic.StateID.StateStomping)
+    {
+        if (!isStompFlip)
+        {
+            Player.Sound.PlaySound("sn_jump");
+            isStompFlip = true;
+        }
+    }
+    else
+        isStompFlip = false;
+
+    // Squat
+    if (currentState == Sonic.StateID.StateSquat &&
+	   (previousState == Sonic.StateID.StateStandRoot || previousState == Sonic.StateID.StateSliding))
+    {
+        if (!isSquatGrunt)
+        {
+            Player.Sound.PlaySound("sn_climb_jump");
+            Lua.Call("PlayVoice", "sa1007");
+            isSquatGrunt = true;
+        }
+    }
+    else
+        isSquatGrunt = false;
+
+    // Death
+    if (currentState == Sonic.StateID.StateDead)
+    {
+        if ((!isSuper || !isUnderwater) && !isDeath)
+        {
+            Lua.Call("PlayVoice", "sa1027");
+            isDeath = true;
+        }
+    }
+    else
+        isDeath = false;
+
+    // Lava Death
+    if (currentState == Sonic.StateID.StateLavaDead)
+    {
+        if (!isDeathLava)
+        {
+            Lua.Call("PlayVoice", "sa1028");
+            isDeathLava = true;
+        }
+    }
+    else
+        isDeathLava = false;
+
+    // Trick Finish
+    if (currentState == Sonic.StateID.StateRecoveryJump && previousState != Sonic.StateID.StateHomingFinished)
+    {
+        if (!isTrickFinish)
+        {
+            Player.Sound.PlaySound("sn_climb_balance_ok");
+            Lua.Call("PlayVoice", "sa1009");
+            isTrickFinish = true;
+        }
+    }
+    else if (currentState != Sonic.StateID.StateHomingAttack || previousState != Sonic.StateID.StateRecoveryJump)
+        isTrickFinish = false;
+
+    // Wall Climb
+    if (currentState == Sonic.StateID.StateWallMove)
+    {
+        if (!isClimbGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1002");
+            isClimbGrunt = true;
+        }
+    }
+    else
+        isClimbGrunt = false;
+
+    // Breathe (exiting water)
+    if (isUnderwater)
+        isBreatheGrunt = false;
+    else if (!isBreatheGrunt)
+    {
+        Lua.Call("PlayVoice", "sa1033");
+        isBreatheGrunt = true;
+    }
+
+    // Koco Jump
+    if (currentState == Sonic.StateID.StateJumpWithKodama)
+    {
+        if (!isKocoJump)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1003");
+            isKocoJump = true;
+        }
+    }
+    else
+        isKocoJump = false;
+
+    // Animal Jump
+    if (currentState == Sonic.StateID.StateJumpWithAnimal)
+    {
+        if (!isAnimalJump)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1003");
+            isAnimalJump = true;
+        }
+    }
+    else
+        isAnimalJump = false;
+
+    // Dash Ramp
+    bool disableSoundFlag = currentStageID == "w7d03" || currentStageID == "w7d07";
+    if (currentState == Sonic.StateID.StateJumpBoardLaunch)
+    {
+        if (!isDashRamp && !disableSoundFlag &&
+            previousState != Sonic.StateID.StateBoarding &&
+            currentState != Sonic.StateID.StateBoarding)
+        {
+            Player.Sound.PlaySound("obj_testtone");
+            isDashRamp = true;
+        }
+    }
+    else
+        isDashRamp = false;
+
+    // Pipe Hotfix (4-6)
+    if (currentState == Sonic.StateID.StateCaught && currentStageID == "w7d07")
+    {
+        if (!isPipeHotfix)
+        {
+            Player.Sound.PlaySound("obj_s_tunnel");
+            isPipeHotfix = true;
+        }
+    }
+    else
+        isPipeHotfix = false;
+
+    // Super Sonic Brake
+    if (currentState == Sonic.StateID.StateFlyTurn)
+    {
+        if (!isSuperSonicBrakeFix)
+        {
+            Player.Sound.PlaySound("sn_quick_turn");
+            Lua.Call("PlayVoice", "sa1007");
+            isSuperSonicBrakeFix = true;
+        }
+    }
+    else
+        isSuperSonicBrakeFix = false;
+
+    // Wall Slide
+    if (currentState == Sonic.StateID.StateWallJumpReady)
+    {
+        if (!isWallSlide)
+        {
+            Player.Sound.PlaySound("sn_land_conc");
+            isWallSlide = true;
+        }
+    }
+    else
+        isWallSlide = false;
+
+    // Hang Pole
+    if (currentState == Sonic.StateID.StateHangPole)
+    {
+        if (!isHangPole)
+        {
+            Player.Sound.PlaySound("sn_catch");
+            isHangPole = true;
+        }
+    }
+    else
+        isHangPole = false;
+
+    // Light Dash
+    if (currentState == Sonic.StateID.StateLightDash)
+    {
+        if (!isLightDash)
+        {
+            Lua.Call("PlayVoice", lightdashVoices[random.Next(lightdashVoices.Count)]);
+            isLightDash = true;
+        }
+    }
+    else
+        isLightDash = false;
+
+    // Sliding
+    if (currentState == Sonic.StateID.StateSliding)
+    {
+        if (!isSliding)
+        {
+            Lua.Call("PlayVoice", slidingVoices[random.Next(slidingVoices.Count)]);
+            isSliding = true;
+        }
+    }
+    else
+        isSliding = false;
+
+    // Quick Step
+    bool isInQuickStep = QuickStepStates.Contains(currentState) || 
+                         (isSuper && currentState == Sonic.StateID.StateAvoid);
+    if (isInQuickStep)
+    {
+        if (!isQuickStep)
+        {
+            Lua.Call("PlayVoice", quickstepVoices[random.Next(quickstepVoices.Count)]);
+            isQuickStep = true;
+        }
+    }
+    else
+        isQuickStep = false;
+
+    // Guard Block
+    if (!isSuper && currentState == Sonic.StateID.StateGuardedFlipBack)
+    {
+        if (!isGaurdBlock)
+        {
+            Lua.Call("PlayVoice", guardedflipVoices[random.Next(guardedflipVoices.Count)]);
+            isGaurdBlock = true;
+        }
+    }
+    else
+        isGaurdBlock = false;
+
+    // Aura Train
+    if (currentState == Sonic.StateID.StateAuraTrain)
+    {
+        if (!isAuraTrain)
+        {
+            Lua.Call("PlayVoice", auratrainVoices[random.Next(auratrainVoices.Count)]);
+            isAuraTrain = true;
+        }
+    }
+    else
+        isAuraTrain = false;
+}
+
+Code "Extra Sounds (Miles "Tails" Prower)" by "Batman Sonic & SuperNova124"
+//
+    #lib "Player"
+    #lib "Tails"
+    #lib "Lua"
+    #lib "HMM"
+    
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Collections.Generic;
+
+    // Static lists
+    static List<Tails.StateID> QuickStepStates = new List<Tails.StateID>
+    {
+        Tails.StateID.StateLeftStep,
+        Tails.StateID.StateLeftStepRun,
+        Tails.StateID.StateRightStep,
+        Tails.StateID.StateRightStepRun,
+        Tails.StateID.StateQuickStepLeft,
+        Tails.StateID.StateQuickStepRight,
+        Tails.StateID.StateQuickStepRoot,
+    };
+
+    static List<string> slidingVoices = new List<string>{"sa1002", "sa1003", "sa1005", "sa1011", "sa1038", "ta1100"};
+	static List<string> quickstepVoices = new List<string>{"sa1001", "sa1003", "sa1007", "sa1024", "sa1034", "sa1038"};
+    static List<string> guardedflipVoices = new List<string>{"sa1025", "sa1035"};
+    static List<string> auratrainVoices = new List<string>{"ta1112", "ta1100"};
+
+    static Random random = new Random();
+
+    // State flags
+    static bool isTakeDamageMisc = false;   
+    static bool isSomersaultLand = false;
+    static bool isGrindStep = false;
+    static bool isGrindJumpGrunt = false;
+    static bool isDoubleJumpGrunt = false;
+    static bool isSquatGrunt = false;
+    static bool isDeath = false;
+    static bool isDeathLava = false;
+    static bool isDashRamp = false;
+    static bool isTrickFinish = false;
+    static bool isBreatheGrunt = false;
+    static bool isCycloneStart = false;
+    static bool isHangPole = false;
+    static bool isSliding = false;
+    static bool isQuickStep = false;
+    static bool isGaurdBlock = false;
+    static bool isAuraTrain = false;
+
+//
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Tails)
+        return;
+    
+    var currentState = Player.State.GetCurrentStateID<Tails.StateID>();
+    bool isUnderwater = Player.Status.IsUnderwater();
+
+    // Grind Step
+    if (currentState == Tails.StateID.StateGrindStep)
+    {
+        if (!isGrindStep)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1007");
+            isGrindStep = true;
+        }
+    }
+    else
+        isGrindStep = false;
+
+    // Damage (misc)
+    if (currentState == Tails.StateID.StateGrindDamage ||
+        currentState == Tails.StateID.StateGrindDamageAir ||
+        currentState == Tails.StateID.StateDivingDamage ||
+        currentState == Tails.StateID.StateDivingSpecialDamage)
+    {
+        if (!isTakeDamageMisc)
+        {
+            Player.Sound.PlaySound("sn_damage");
+            Lua.Call("PlayVoice", "sa1026");
+            isTakeDamageMisc = true;
+        }
+    }
+    else
+        isTakeDamageMisc = false;
+
+    // Somersault Landing
+    if (currentState == Tails.StateID.StateSpringJumpHeadLand)
+    {
+        if (!isSomersaultLand)
+        {
+            Player.Sound.PlaySound("sn_bump_jump_roll");
+            Lua.Call("PlayVoice", "sa1036");
+            isSomersaultLand = true;
+        }
+    }
+    else
+        isSomersaultLand = false;
+
+    // Spin Jump
+    if (currentState == Tails.StateID.StateGrindJump)
+    {
+        if (!isGrindJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1001");
+            isGrindJumpGrunt = true;
+        }
+    }
+    else
+        isGrindJumpGrunt = false;
+
+    // Double Jump
+    if (currentState == Tails.StateID.StateDoubleJump)
+    {
+        if (!isDoubleJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1007");
+            isDoubleJumpGrunt = true;
+        }
+    }
+    else
+        isDoubleJumpGrunt = false;
+
+    // Squat
+    if (currentState == Tails.StateID.StateSquat)
+    {
+        if (!isSquatGrunt)
+        {
+            Player.Sound.PlaySound("sn_climb_jump");
+            Lua.Call("PlayVoice", "ta1100");
+            isSquatGrunt = true;
+        }
+    }
+    else
+        isSquatGrunt = false;
+
+    // Death
+    if (currentState == Tails.StateID.StateDead)
+    {
+        if (!isDeath)
+        {
+            Lua.Call("PlayVoice", "sa1027");
+            isDeath = true;
+        }
+    }
+    else
+        isDeath = false;
+
+    // Lava Death
+    if (currentState == Tails.StateID.StateLavaDead)
+    {
+        if (!isDeathLava)
+        {
+            Lua.Call("PlayVoice", "sa1028");
+            isDeathLava = true;
+        }
+    }
+    else
+        isDeathLava = false;
+
+    // Trick Finish
+    if (currentState == Tails.StateID.StateRecoveryJump)
+    {
+        if (!isTrickFinish)
+        {
+            Player.Sound.PlaySound("sn_climb_balance_ok");
+            Lua.Call("PlayVoice", "ta1110");
+            isTrickFinish = true;
+        }
+    }
+    else
+        isTrickFinish = false;
+
+    // Breathe
+    if (isUnderwater)
+        isBreatheGrunt = false;
+    else if (!isBreatheGrunt)
+    {
+        Lua.Call("PlayVoice", "sa1033");
+        isBreatheGrunt = true;
+    }
+
+    // Dash Ramp
+    if (currentState == Tails.StateID.StateJumpBoardLaunch)
+    {
+        if (!isDashRamp)
+        {
+            Player.Sound.PlaySound("obj_testtone");
+            isDashRamp = true;
+        }
+    }
+    else
+        isDashRamp = false;
+
+    // Cyclone Start
+    if (currentState == Tails.StateID.StateCycloneAppear)
+    {
+        if (!isCycloneStart)
+        {
+            Lua.Call("PlayVoice", "ta1110");
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Player.Sound.PlaySound("sn_chaosemerald_guard");
+            isCycloneStart = true;
+        }
+    }
+    else
+        isCycloneStart = false;
+
+    // Hang Pole
+    if (currentState == Tails.StateID.StateHangPole)
+    {
+        if (!isHangPole)
+        {
+            Player.Sound.PlaySound("sn_catch");
+            isHangPole = true;
+        }
+    }
+    else
+        isHangPole = false;
+
+    // Sliding
+    if (currentState == Tails.StateID.StateSliding)
+    {
+        if (!isSliding)
+        {
+            Lua.Call("PlayVoice", slidingVoices[random.Next(slidingVoices.Count)]);
+            isSliding = true;
+        }
+    }
+    else
+        isSliding = false;
+
+    // Quick Step
+    if (QuickStepStates.Contains(currentState))
+    {
+        if (!isQuickStep)
+        {
+            Lua.Call("PlayVoice", quickstepVoices[random.Next(quickstepVoices.Count)]);
+            isQuickStep = true;
+        }
+    }
+    else
+        isQuickStep = false;
+
+    // Guard Block
+    if (currentState == Tails.StateID.StateGuardedFlipBack)
+    {
+        if (!isGaurdBlock)
+        {
+            Lua.Call("PlayVoice", guardedflipVoices[random.Next(guardedflipVoices.Count)]);
+            isGaurdBlock = true;
+        }
+    }
+    else
+        isGaurdBlock = false;
+
+    // Aura Train
+    if (currentState == Tails.StateID.StateAuraTrain)
+    {
+        if (!isAuraTrain)
+        {
+            Lua.Call("PlayVoice", auratrainVoices[random.Next(auratrainVoices.Count)]);
+            isAuraTrain = true;
+        }
+    }
+    else
+        isAuraTrain = false;
+}
+
+Code "Extra Sounds (Knuckles the Echidna)" by "Batman Sonic & SuperNova124"
+//
+    #lib "Player"
+    #lib "Knuckles"
+    #lib "Lua"
+    #lib "HMM"
+    
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Collections.Generic;
+
+    // Static lists
+    static List<Knuckles.StateID> QuickStepStates = new List<Knuckles.StateID>
+    {
+        Knuckles.StateID.StateLeftStep,
+        Knuckles.StateID.StateLeftStepRun,
+        Knuckles.StateID.StateRightStep,
+        Knuckles.StateID.StateRightStepRun,
+        Knuckles.StateID.StateQuickStepLeft,
+        Knuckles.StateID.StateQuickStepRight,
+        Knuckles.StateID.StateQuickStepRoot,
+    };
+
+    static List<string> slidingVoices = new List<string>{"sa1003", "sa1007", "ka1100"};
+	static List<string> quickstepVoices = new List<string>{"ka1100", "sa1003", "sa1007", "sa1034", "sa1036", "sa1038"};
+    static List<string> guardedflipVoices = new List<string>{"ka1200", "sa1011", "sa1029"};
+    static List<string> auratrainVoices = new List<string>{"ka1112", "ka1100"};
+
+    static Random random = new Random();
+
+    // State flags
+    static bool isPunchOne = false;
+    static bool isPunchTwo = false;
+    static bool isPunchThree = false;
+    static bool isHeatKnuckle = false;
+    static bool isHeatKnuckleFollow = false;
+    static bool isHeatKnuckleAfter = false;
+    static bool isTakeDamageMisc = false;   
+    static bool isSomersaultLand = false;
+    static bool isGrindStep = false;
+    static bool isSpinJump = false;
+    static bool isGrindJumpGrunt = false;
+    static bool isDoubleJumpGrunt = false;
+    static bool isStompAttackLand = false;
+    static bool isStompAttack = false;
+    static bool isSquatGrunt = false;
+    static bool isDeath = false;
+    static bool isDeathLava = false;
+    static bool isDashRamp = false;
+    static bool isTrickFinish = false;
+    static bool isBreatheGrunt = false;
+    static bool isDrillStart = false;
+    static bool isDrillJump = false;
+    static bool isCyknuckle = false;
+    static bool isCyknuckleGround = false;
+    static bool isCyknuckleWall = false;
+    static bool isHangPole = false;
+    static bool isSliding = false;
+    static bool isQuickStep = false;
+    static bool isGaurdBlock = false;
+    static bool isAuraTrain = false;
+
+//
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Knuckles)
+        return;
+    
+    var currentState = Player.State.GetCurrentStateID<Knuckles.StateID>();
+    bool isUnderwater = Player.Status.IsUnderwater();
+    bool isBoostPressed = Player.Input.IsPressed(Player.InputActionType.PlayerBoost);
+
+    // Punch 1
+    if (currentState == Knuckles.StateID.KnucklesStatePunch1)
+    {
+        if (!isPunchOne)
+        {
+            Lua.Call("PlayVoice", "sa1034");
+            isPunchOne = true;
+        }
+    }
+    else
+        isPunchOne = false;
+
+    // Punch 2
+    if (currentState == Knuckles.StateID.KnucklesStatePunch2)
+    {
+        if (!isPunchTwo)
+        {
+            Lua.Call("PlayVoice", "sa1024");
+            isPunchTwo = true;
+        }
+    }
+    else
+        isPunchTwo = false;
+
+    // Punch 3
+    if (currentState == Knuckles.StateID.KnucklesStateUppercut)
+    {
+        if (!isPunchThree)
+        {
+            Lua.Call("PlayVoice", "sa1010");
+            isPunchThree = true;
+        }
+    }
+    else
+        isPunchThree = false;
+
+    // Heat Knuckle Charge
+    if (currentState == Knuckles.StateID.StateMaximumHeatKnuckle)
+    {
+        if (!isHeatKnuckle)
+        {
+            Lua.Call("PlayVoice", "ka1202");
+            Player.Sound.PlaySound("_sn_stomping_start");
+            isHeatKnuckle = true;
+        }
+    }
+    else
+        isHeatKnuckle = false;
+
+    // Heat Knuckle Attack
+    if (currentState == Knuckles.StateID.StateMaximumHeatKnuckleFollow)
+    {
+        if (!isHeatKnuckleFollow)
+        {
+            Player.Sound.PlaySound("sn_homing");
+            isHeatKnuckleFollow = true;
+        }
+    }
+    else
+        isHeatKnuckleFollow = false;
+
+    // Heat Knuckle Bounce
+    if (currentState == Knuckles.StateID.StateMaximumHeatKnuckleBounce)
+    {
+        if (!isHeatKnuckleAfter)
+        {
+            Lua.Call("PlayVoice", "sa1034");
+            Player.Sound.PlaySound("sn_lightdash");
+            isHeatKnuckleAfter = true;
+        }
+    }
+    else
+        isHeatKnuckleAfter = false;
+
+    // Grind Step
+    if (currentState == Knuckles.StateID.StateGrindStep)
+    {
+        if (!isGrindStep)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1007");
+            isGrindStep = true;
+        }
+    }
+    else
+        isGrindStep = false;
+
+    // Damage (misc)
+    if (currentState == Knuckles.StateID.StateGrindDamage ||
+        currentState == Knuckles.StateID.StateGrindDamageAir ||
+        currentState == Knuckles.StateID.StateDivingDamage ||
+        currentState == Knuckles.StateID.StateDivingSpecialDamage)
+    {
+        if (!isTakeDamageMisc)
+        {
+            Player.Sound.PlaySound("sn_damage");
+            Lua.Call("PlayVoice", "sa1026");
+            isTakeDamageMisc = true;
+        }
+    }
+    else
+        isTakeDamageMisc = false;
+
+    // Somersault Landing
+    if (currentState == Knuckles.StateID.StateSpringJumpHeadLand)
+    {
+        if (!isSomersaultLand)
+        {
+            Player.Sound.PlaySound("sn_bump_jump_roll");
+            Lua.Call("PlayVoice", "sa1034");
+            isSomersaultLand = true;
+        }
+    }
+    else
+        isSomersaultLand = false;
+
+    // Spin Jump
+    if (currentState == Knuckles.StateID.StateTreeJump)
+    {
+        if (!isSpinJump)
+        {
+            Player.Sound.PlaySound("sn_windmill_kick");
+			Lua.Call("PlayVoice", "sa1003");
+            isSpinJump = true;
+        }
+    }
+    else
+        isSpinJump = false;
+
+    // Grind Jump
+    if (currentState == Knuckles.StateID.StateJump ||
+        currentState == Knuckles.StateID.StateGrindJump)
+    {
+        if (!isGrindJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1003");
+            isGrindJumpGrunt = true;
+        }
+    }
+    else
+        isGrindJumpGrunt = false;
+
+    // Double Jump
+    if (currentState == Knuckles.StateID.StateDoubleJump)
+    {
+        if (!isDoubleJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1007");
+            isDoubleJumpGrunt = true;
+        }
+    }
+    else
+        isDoubleJumpGrunt = false;
+
+    // Stomp Attack
+    if (currentState == Knuckles.StateID.KnucklesStateStompingDown)
+    {
+        if (!isStompAttack)
+        {
+            Lua.Call("PlayVoice", "ka1202");
+            isStompAttack = true;
+        }
+    }
+    else
+        isStompAttack = false;
+
+    // Stomp Attack Land
+    if (currentState == Knuckles.StateID.KnucklesStateStompingLand)
+    {
+        if (!isStompAttackLand)
+        {
+            Lua.Call("PlayVoice", "ka1110");
+            isStompAttackLand = true;
+        }
+    }
+    else
+        isStompAttackLand = false;
+
+    // Squat
+    if (currentState == Knuckles.StateID.StateSquat)
+    {
+        if (!isSquatGrunt)
+        {
+            Player.Sound.PlaySound("sn_climb_jump");
+            Lua.Call("PlayVoice", "sa1001");
+            isSquatGrunt = true;
+        }
+    }
+    else
+        isSquatGrunt = false;
+
+    // Death
+    if (currentState == Knuckles.StateID.StateDead)
+    {
+        if (!isDeath)
+        {
+            Lua.Call("PlayVoice", "sa1027");
+            isDeath = true;
+        }
+    }
+    else
+        isDeath = false;
+
+    // Lava Death
+    if (currentState == Knuckles.StateID.StateLavaDead)
+    {
+        if (!isDeathLava)
+        {
+            Lua.Call("PlayVoice", "sa1028");
+            isDeathLava = true;
+        }
+    }
+    else
+        isDeathLava = false;
+
+    // Trick Finish
+    if (currentState == Knuckles.StateID.StateRecoveryJump)
+    {
+        if (!isTrickFinish)
+        {
+            Player.Sound.PlaySound("sn_climb_balance_ok");
+            Lua.Call("PlayVoice", "ka1110");
+            isTrickFinish = true;
+        }
+    }
+    else
+        isTrickFinish = false;
+
+    // Breathe
+    if (isUnderwater)
+        isBreatheGrunt = false;
+    else if (!isBreatheGrunt)
+    {
+        Lua.Call("PlayVoice", "sa1033");
+        isBreatheGrunt = true;
+    }
+
+    // Dash Ramp
+    if (currentState == Knuckles.StateID.StateJumpBoardLaunch)
+    {
+        if (!isDashRamp)
+        {
+            Player.Sound.PlaySound("obj_testtone");
+            isDashRamp = true;
+        }
+    }
+    else
+        isDashRamp = false;
+
+    // Cyknuckle Ground
+    if (currentState == Knuckles.StateID.StateCyKnuckle)
+    {
+        if (!isCyknuckleGround)
+        {
+            Lua.Call("PlayVoice", "sa1024");
+            isCyknuckleGround = true;
+        }
+    }
+    else
+        isCyknuckleGround = false;
+
+    // Cyknuckle Wall
+    if (currentState == Knuckles.StateID.StateCyKnuckleWall)
+    {
+        if (!isCyknuckleWall)
+        {
+            Lua.Call("PlayVoice", "sa1010");
+            isCyknuckleWall = true;
+        }
+    }
+    else
+        isCyknuckleWall = false;
+
+    // Cyknuckle Pre-Fall
+    if (currentState == Knuckles.StateID.StateCyKnucklePreFall)
+    {
+        if (!isCyknuckle)
+        {
+            Player.Sound.PlaySound("sn_chaosemerald_guard");
+            Player.Sound.PlaySound("sn_skateboard_jump");
+            Lua.Call("PlayVoice", "ka1202");
+            isCyknuckle = true;
+        }
+    }
+    else
+        isCyknuckle = false;
+
+    // Drill Boost Start
+    if ((currentState == Knuckles.StateID.KnucklesStateDrillBoost ||
+         currentState == Knuckles.StateID.KnucklesStateDrillBoostAir) &&
+        (isBoostPressed || currentState == Knuckles.StateID.KnucklesStateDrillBoostAir))
+    {
+        if (!isDrillStart)
+        {
+            Lua.Call("PlayVoice", "ka1110");
+            Player.Sound.PlaySound("_sn_stomping_start");
+            isDrillStart = true;
+        }
+    }
+    else
+        isDrillStart = false;
+
+    // Drill Jump
+    if (currentState == Knuckles.StateID.KnucklesStateDrillBoostJump)
+    {
+        if (!isDrillJump)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            isDrillJump = true;
+        }
+    }
+    else
+        isDrillJump = false;
+
+    // Hang Pole
+    if (currentState == Knuckles.StateID.StateHangPole)
+    {
+        if (!isHangPole)
+        {
+            Player.Sound.PlaySound("sn_catch");
+            isHangPole = true;
+        }
+    }
+    else
+        isHangPole = false;
+
+    // Sliding
+    if (currentState == Knuckles.StateID.StateSliding)
+    {
+        if (!isSliding)
+        {
+            Lua.Call("PlayVoice", slidingVoices[random.Next(slidingVoices.Count)]);
+            isSliding = true;
+        }
+    }
+    else
+        isSliding = false;
+
+    // Quick Step
+    if (QuickStepStates.Contains(currentState))
+    {
+        if (!isQuickStep)
+        {
+            Lua.Call("PlayVoice", quickstepVoices[random.Next(quickstepVoices.Count)]);
+            isQuickStep = true;
+        }
+    }
+    else
+        isQuickStep = false;
+
+    // Guard Block
+    if (currentState == Knuckles.StateID.StateGuardedFlipBack)
+    {
+        if (!isGaurdBlock)
+        {
+            Lua.Call("PlayVoice", guardedflipVoices[random.Next(guardedflipVoices.Count)]);
+            isGaurdBlock = true;
+        }
+    }
+    else
+        isGaurdBlock = false;
+
+    // Aura Train
+    if (currentState == Knuckles.StateID.StateAuraTrain)
+    {
+        if (!isAuraTrain)
+        {
+            Lua.Call("PlayVoice", auratrainVoices[random.Next(auratrainVoices.Count)]);
+            isAuraTrain = true;
+        }
+    }
+    else
+        isAuraTrain = false;
+}
+
+Code "Extra Sounds (Amy Rose)" by "Batman Sonic & SuperNova124"
+//
+    #include "BlackboardStatus" noemit
+
+    #lib "Player"
+    #lib "Amy"
+    #lib "Lua"
+    #lib "HMM"
+    
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Collections.Generic;
+
+    // Static lists
+    static List<Amy.StateID> QuickStepStates = new List<Amy.StateID>
+    {
+        Amy.StateID.StateLeftStep,
+        Amy.StateID.StateLeftStepRun,
+        Amy.StateID.StateRightStep,
+        Amy.StateID.StateRightStepRun,
+        Amy.StateID.StateQuickStepLeft,
+        Amy.StateID.StateQuickStepRight,
+        Amy.StateID.StateQuickStepRoot,
+    };
+
+    static List<string> lightdashVoices = new List<string>{"aa1110", "aa1101", "aa1112", "sa1036", "sa1033", "aa1100"};
+	static List<string> quickstepVoices = new List<string>{"sa1004", "sa1007", "sa1009", "sa1011", "sa1026", "sa1033"};
+    static List<string> guardedflipVoices = new List<string>{"sa1025", "sa1026", "sa1035"};
+    static List<string> auratrainVoices = new List<string>{"aa1112", "aa1110"};
+
+    static Random random = new Random();
+
+    // State flags
+    static bool isTakeDamageMisc = false;       
+    static bool isSomersaultLand = false;    
+    static bool isGrindStep = false;
+    static bool isSpinDashJump = false;
+    static bool isSpinJump = false;
+    static bool isDoubleJumpGrunt = false;
+    static bool isStompAttack = false;
+    static bool isSquatGrunt = false;
+    static bool isDeath = false;
+    static bool isDeathLava = false;
+    static bool isDashRamp = false;
+    static bool isTrickFinish = false;
+    static bool isCyHammerGrunt = false;
+    static bool isHammerSwing = false;
+    static bool isHighJumpLalala = false;
+    static bool isBreatheGrunt = false;
+    static bool isDriftCard = false;
+    static bool isPropellerHover = false;
+    static bool isCardBuild = false;
+    static bool isCardJump = false;
+    static bool isCardSpinJump = false;
+    static bool isCardSpinDizzy = false;
+    static bool isHangPole = false;
+    static bool isLightDash = false;
+    static bool isSliding = false;
+    static bool isQuickStep = false;
+    static bool isGaurdBlock = false;
+    static bool isAuraTrain = false;
+
+//
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Amy)
+        return;
+    
+    var currentState = Player.State.GetCurrentStateID<Amy.StateID>();
+    var previousState = Player.State.GetPreviousStateID<Amy.StateID>();
+    bool isUnderwater = Player.Status.IsUnderwater();
+
+    // Grind Step
+    if (currentState == Amy.StateID.StateGrindStep)
+    {
+        if (!isGrindStep)
+        {
+            Player.Sound.PlaySound("sn_triangle_jump");
+            Lua.Call("PlayVoice", "sa1007");
+            isGrindStep = true;
+        }
+    }
+    else
+        isGrindStep = false;
+
+    // Damage (misc)
+    if (currentState == Amy.StateID.StateGrindDamage ||
+        currentState == Amy.StateID.StateGrindDamageAir ||
+        currentState == Amy.StateID.StateDivingDamage ||
+        currentState == Amy.StateID.StateDivingSpecialDamage)
+    {
+        if (!isTakeDamageMisc)
+        {
+            Player.Sound.PlaySound("sn_damage");
+            Lua.Call("PlayVoice", "sa1026");
+            isTakeDamageMisc = true;
+        }
+    }
+    else
+        isTakeDamageMisc = false;
+
+    // Somersault Landing
+    if (currentState == Amy.StateID.StateSpringJumpHeadLand)
+    {
+        if (!isSomersaultLand)
+        {
+            Player.Sound.PlaySound("sn_bump_jump_roll");
+            Lua.Call("PlayVoice", "sa1033");
+            isSomersaultLand = true;
+        }
+    }
+    else
+        isSomersaultLand = false;
+
+    // Spin Dash Jump
+    if (currentState == Amy.StateID.StateJump && previousState == Amy.StateID.StateSpinBoost)
+    {
+        if (!isSpinDashJump)
+        {
+            Player.Sound.PlaySound("am_stomp_bounce");
+            isSpinDashJump = true;
+        }
+    }
+    else
+        isSpinDashJump = false;
+
+    // Spin Jump
+    if (currentState == Amy.StateID.StateJump || currentState == Amy.StateID.StateGrindJump)
+    {
+        if (!isSpinJump)
+        {
+            Lua.Call("PlayVoice", "sa1001");
+            isSpinJump = true;
+        }
+    }
+    else
+        isSpinJump = false;
+
+    // Double Jump
+    if (currentState == Amy.StateID.StateDoubleJump)
+    {
+        if (!isDoubleJumpGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1009");
+            isDoubleJumpGrunt = true;
+        }
+    }
+    else
+        isDoubleJumpGrunt = false;
+
+    // Stomp Attack
+    if (currentState == Amy.StateID.AmyStateStompingDown)
+    {
+        if (!isStompAttack)
+        {
+            Lua.Call("PlayVoice", "sa1024");
+            isStompAttack = true;
+        }
+    }
+    else
+        isStompAttack = false;
+
+    // Squat
+    if (currentState == Amy.StateID.StateSquat)
+    {
+        if (!isSquatGrunt)
+        {
+            Player.Sound.PlaySound("sn_climb_jump");
+            Lua.Call("PlayVoice", "sa1038");
+            isSquatGrunt = true;
+        }
+    }
+    else
+        isSquatGrunt = false;
+
+    // Death
+    if (currentState == Amy.StateID.StateDead)
+    {
+        if (!isDeath)
+        {
+            Lua.Call("PlayVoice", "sa1027");
+            isDeath = true;
+        }
+    }
+    else
+        isDeath = false;
+
+    // Lava Death
+    if (currentState == Amy.StateID.StateLavaDead)
+    {
+        if (!isDeathLava)
+        {
+            Lua.Call("PlayVoice", "sa1028");
+            isDeathLava = true;
+        }
+    }
+    else
+        isDeathLava = false;
+
+    // Trick Finish
+    if (currentState == Amy.StateID.StateRecoveryJump)
+    {
+        if (!isTrickFinish)
+        {
+            Player.Sound.PlaySound("sn_climb_balance_ok");
+            Lua.Call("PlayVoice", "sa1034");
+            isTrickFinish = true;
+        }
+    }
+    else
+        isTrickFinish = false;
+
+    // CyHammer
+    if (currentState == Amy.StateID.StateCyHammer)
+    {
+        if (!isCyHammerGrunt)
+        {
+            Lua.Call("PlayVoice", "sa1024");
+            isCyHammerGrunt = true;
+        }
+    }
+    else
+        isCyHammerGrunt = false;
+
+    // Breathe
+    if (isUnderwater)
+        isBreatheGrunt = false;
+    else if (!isBreatheGrunt)
+    {
+        Lua.Call("PlayVoice", "sa1033");
+        isBreatheGrunt = true;
+    }
+
+    // Dash Ramp
+    if (currentState == Amy.StateID.StateJumpBoardLaunch)
+    {
+        if (!isDashRamp)
+        {
+            Player.Sound.PlaySound("obj_testtone");
+            isDashRamp = true;
+        }
+    }
+    else
+        isDashRamp = false;
+
+    // High Jump
+    if (currentState == Amy.StateID.StateHighJump)
+    {
+        if (!isHighJumpLalala)
+        {
+            Lua.Call("PlayVoice", "aa1100");
+            isHighJumpLalala = true;
+        }
+    }
+    else
+        isHighJumpLalala = false;
+
+    // Hammer Swing (Air)
+    if (currentState == Amy.StateID.StateAirCyHammer)
+    {
+        if (!isHammerSwing)
+        {
+            Lua.Call("PlayVoice", "sa1024");
+            Player.Sound.PlaySound("am_cyhammer_air_start");
+            isHammerSwing = true;
+        }
+    }
+    else
+        isHammerSwing = false;
+
+    // Tarot Drift
+    if (currentState == Amy.StateID.AmyStateTarotDrift)
+    {
+        if (!isDriftCard)
+        {
+            Lua.Call("PlayVoice", "aa1112");
+            isDriftCard = true;
+        }
+    }
+    else
+        isDriftCard = false;
+
+    // Tarot Build
+    if (currentState == Amy.StateID.AmyStateTarotBuild ||
+        currentState == Amy.StateID.AmyStateTarotBuildAir ||
+        currentState == Amy.StateID.AmyStateTarotBuildFall)
+    {
+        if (!isCardBuild)
+        {
+            Lua.Call("PlayVoice", "aa1101");
+            isCardBuild = true;
+        }
+    }
+    else
+        isCardBuild = false;
+
+    // Propeller Hover
+    if (currentState == Amy.StateID.StatePropellerHover)
+    {
+        if (!isPropellerHover)
+        {
+            Player.Sound.PlaySound("_sn_airtrick");
+            isPropellerHover = true;
+        }
+    }
+    else
+        isPropellerHover = false;
+
+    // Card Jump
+    if (currentState == Amy.StateID.AmyStateTarotBoostJump)
+    {
+        if (!isCardJump)
+        {
+            Player.Sound.PlaySound("sn_skateboard_trick");
+            isCardJump = true;
+        }
+    }
+    else
+        isCardJump = false;
+
+    // Card Spin Jump
+    if (currentState == Amy.StateID.AmyStateTarotRollingJump)
+    {
+        if (!isCardSpinJump)
+        {
+            Player.Sound.PlaySound("sn_skateboard_trick");
+            isCardSpinJump = true;
+        }
+    }
+    else
+        isCardSpinJump = false;
+
+    // Card Spin Dizzy
+    if (currentState == Amy.StateID.AmyStateTarotRollingStun)
+    {
+        if (!isCardSpinDizzy)
+        {
+            Lua.Call("PlayVoice", "sa1048");
+            isCardSpinDizzy = true;
+        }
+    }
+    else
+        isCardSpinDizzy = false;
+
+    // Hang Pole
+    if (currentState == Amy.StateID.StateHangPole)
+    {
+        if (!isHangPole)
+        {
+            Player.Sound.PlaySound("sn_catch");
+            isHangPole = true;
+        }
+    }
+    else
+        isHangPole = false;
+
+    // Light Dash
+    if (currentState == Amy.StateID.StateLightDash)
+    {
+        if (!isLightDash)
+        {
+            Lua.Call("PlayVoice", lightdashVoices[random.Next(lightdashVoices.Count)]);
+            isLightDash = true;
+        }
+    }
+    else
+        isLightDash = false;
+
+    // Sliding
+    if (currentState == Amy.StateID.StateSliding)
+    {
+        if (!isSliding)
+        {
+            Lua.Call("PlayVoice", "sa1029");
+            isSliding = true;
+        }
+    }
+    else
+        isSliding = false;
+
+    // Quick Step
+    if (QuickStepStates.Contains(currentState))
+    {
+        if (!isQuickStep)
+        {
+            Lua.Call("PlayVoice", quickstepVoices[random.Next(quickstepVoices.Count)]);
+            isQuickStep = true;
+        }
+    }
+    else
+        isQuickStep = false;
+
+    // Guard Block
+    if (currentState == Amy.StateID.StateGuardedFlipBack)
+    {
+        if (!isGaurdBlock)
+        {
+            Lua.Call("PlayVoice", guardedflipVoices[random.Next(guardedflipVoices.Count)]);
+            isGaurdBlock = true;
+        }
+    }
+    else
+        isGaurdBlock = false;
+
+    // Aura Train
+    if (currentState == Amy.StateID.StateAuraTrain)
+    {
+        if (!isAuraTrain)
+        {
+            Lua.Call("PlayVoice", auratrainVoices[random.Next(auratrainVoices.Count)]);
+            isAuraTrain = true;
+        }
+    }
+    else
+        isAuraTrain = false;
+}
+
+Code "Shark Sandski Blow Grunt" by "Batman Sonic & SuperNova124"
+//
+
+#lib "Player"
+
+// Static voice lists per character
+static List<string> sonicSandskiBlow = new List<string> { "sa1027", "sa1049", "sa1050" };
+static List<string> tailsSandskiBlow = new List<string> { "sa1026", "sa1027", "sa1028" };
+static List<string> knucklesSandskiBlow = new List<string> { "sa1025", "sa1026", "sa1029" };
+static List<string> amySandskiBlow = new List<string> { "sa1027", "sa1035" };
+
+static Random random = new Random();
+
+static bool isSandskiBlow = false;
+static bool hasPlayedCollision = false;
+
+{
+    // Cache current state check
+    var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+
+    // Sandski Blow state
+    if (currentState == Sonic.StateID.StateSandSkiBlow)
+    {
+        // Play voice once per state entry
+        if (!isSandskiBlow)
+        {
+            // Get voice list based on player type
+            List<string> sandskiblow = null;
+            switch (Player.GetPlayerType())
+            {
+                case Player.PlayerType.Sonic:
+                    sandskiblow = sonicSandskiBlow;
+                    break;
+                case Player.PlayerType.Tails:
+                    sandskiblow = tailsSandskiBlow;
+                    break;
+                case Player.PlayerType.Knuckles:
+                    sandskiblow = knucklesSandskiBlow;
+                    break;
+                case Player.PlayerType.Amy:
+                    sandskiblow = amySandskiBlow;
+                    break;
+                default:
+                    sandskiblow = sonicSandskiBlow; // fallback to Sonic
+                    break;
+            }
+
+            Lua.Call("PlayVoice", sandskiblow[random.Next(sandskiblow.Count)]);
+            isSandskiBlow = true;
+            hasPlayedCollision = false; // reset collision flag
+        }
+
+        // Play collision sound once when grounded
+        if (Player.Status.IsGrounded() && !hasPlayedCollision)
+        {
+            Player.Sound.PlaySound("sn_collision");
+            hasPlayedCollision = true;
+        }
+    }
+    else
+    {
+        isSandskiBlow = false;
+        hasPlayedCollision = false;
+    }
+}
+
+Code "Forces-like Jump Ball Sound" by "Batman Sonic & SuperNova124"
+//Makes the spin sound play when each character curls into a ball, like in Sonic Forces.
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Sonic"
+#lib "Knuckles"
+#lib "Amy"
+#lib "Time"
+#lib "Lua"
+#lib "HMM"
+#lib "INI"
+	
+#load "System.Numerics.dll"
+
+using System.Numerics;
+using System.Collections.Generic;
+
+static bool isJumpSpinBounceAttack = false;
+static bool isSpinDashJump = false;
+static bool isBoostWallJump = false;
+static bool isAmyGrindDoubleJump = false;
+static bool isSpinState = false;
+static int spinDashJumpSoundHandle = -1;
+
+static bool IsConfigInitialized = false;
+static int conJumpSpinSound = 0;
+static int conLegacySpinDash = 0;
+
+// Spin States
+static List<Sonic.StateID> _jumpSpinSoundStates = new()
+{
+    Sonic.StateID.StateQuickStepDoubleJump,
+    Sonic.StateID.StateDriftDash,
+    Sonic.StateID.StateDropDash,
+    Sonic.StateID.StateSpin
+};
+
+if (!IsConfigInitialized)
+{
+    var modsQuery = HMM.FindModsByName("Quality of Life Additions");
+	
+    if (modsQuery.Count == 1)
+    {
+        string modConfigIniPath = System.IO.Path.Combine(modsQuery[0].Path, "mod.ini");
+        var ini = INI.Read(modConfigIniPath);
+
+        conJumpSpinSound = INI.Parse<int>(ini["Main"]["JumpSpinSound"], conJumpSpinSound);
+        conLegacySpinDash = INI.Parse<int>(ini["Main"]["LegacySpinDash"], conLegacySpinDash);
+
+        // StateSpinBoost is an extra addition for conJumpSpinSound == 2,
+        // only when Legacy Spin Dash isn't set to 3.
+        if (conLegacySpinDash != 3 && !_jumpSpinSoundStates.Contains(Sonic.StateID.StateSpinBoost))
+        {
+            _jumpSpinSoundStates.Add(Sonic.StateID.StateSpinBoost);
+        }
+
+        IsConfigInitialized = true;
+    }
+}
+
+// Check if the spin sound should be enabled
+if (conJumpSpinSound == 1 || conJumpSpinSound == 2)
+{
+    var currentPlayerType = Player.GetPlayerType();
+
+    // Sonic, Tails and Knuckles
+    if (currentPlayerType == Player.PlayerType.Sonic || 
+        currentPlayerType == Player.PlayerType.Tails || 
+        currentPlayerType == Player.PlayerType.Knuckles)
+    {
+        var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+        var previousState = Player.State.GetPreviousStateID<Sonic.StateID>();
+
+        // StateBounceJump
+        if (currentState == Sonic.StateID.StateBounceJump && previousState != Sonic.StateID.StateBounceJump)
+        {
+            if (!isJumpSpinBounceAttack)
+            {
+                Player.Sound.PlaySound("sn_spin");
+                isJumpSpinBounceAttack = true;
+            }
+        }
+        else if (currentState != Sonic.StateID.StateBounceJump)
+        {
+            isJumpSpinBounceAttack = false;
+        }
+
+        // StateJump transition from spin states
+        if (currentState == Sonic.StateID.StateJump &&
+            (previousState == Sonic.StateID.StateSpinBoost ||
+             previousState == Sonic.StateID.StateSpinBoostCharge ||
+             previousState == Sonic.StateID.StateDriftDash ||
+             previousState == Sonic.StateID.StateDropDash ||
+             previousState == Sonic.StateID.StateSpin))
+        {
+            if (!isSpinDashJump)
+            {
+                spinDashJumpSoundHandle = Player.Sound.PlaySound("sn_spin");
+                isSpinDashJump = true;
+            }
+        }
+        else if (currentState != Sonic.StateID.StateJump)
+        {
+            if (isSpinDashJump)
+            {
+                int soundHandleSpinDash = Player.Sound.PlaySound("sn_spin");
+                Player.Sound.StopSound(&soundHandleSpinDash);
+            }
+
+            isSpinDashJump = false;
+        }
+
+        // Stop sound when leaving StateBounceJump
+        if (currentState != Sonic.StateID.StateBounceJump && previousState == Sonic.StateID.StateBounceJump)
+        {
+            int soundSpinJumpSonic = Player.Sound.PlaySound("sn_spin");
+            Player.Sound.StopSound(&soundSpinJumpSonic);
+        }
+    }
+
+    // Amy
+    if (currentPlayerType == Player.PlayerType.Amy)
+    {
+        var currentAmyState = Player.State.GetCurrentStateID<Amy.StateID>();
+        var previousAmyState = Player.State.GetPreviousStateID<Amy.StateID>();
+
+        // Handle StateGrindDoubleJump
+        if (currentAmyState == Amy.StateID.StateGrindDoubleJump && previousAmyState != Amy.StateID.StateGrindDoubleJump)
+        {
+            if (!isAmyGrindDoubleJump)
+            {
+                Player.Sound.PlaySound("sn_spin");
+                isAmyGrindDoubleJump = true;
+            }
+        }
+        else if (currentAmyState != Amy.StateID.StateGrindDoubleJump)
+        {
+            isAmyGrindDoubleJump = false;
+        }
+
+        // Handle StateJump transition from spin states (Amy)
+        if (currentAmyState == Amy.StateID.StateJump &&
+            (previousAmyState == Amy.StateID.StateSpinBoost ||
+             previousAmyState == Amy.StateID.StateSpinBoostCharge ||
+             previousAmyState == Amy.StateID.StateDriftDash ||
+             previousAmyState == Amy.StateID.StateDropDash ||
+             previousAmyState == Amy.StateID.StateSpin))
+        {
+            if (!isSpinDashJump)
+            {
+                spinDashJumpSoundHandle = Player.Sound.PlaySound("sn_spin");
+                isSpinDashJump = true;
+            }
+        }
+        else if (currentAmyState != Amy.StateID.StateJump)
+        {
+            if (isSpinDashJump)
+            {
+                int soundHandleSpinDash = Player.Sound.PlaySound("sn_spin");
+                Player.Sound.StopSound(&soundHandleSpinDash);
+            }
+
+            isSpinDashJump = false;
+        }
+
+        // Stop sounds when leaving states
+        if (currentAmyState != Amy.StateID.StateGrindDoubleJump && previousAmyState == Amy.StateID.StateGrindDoubleJump)
+        {
+            int soundGrindDoubleJump = Player.Sound.PlaySound("sn_spin");
+            Player.Sound.StopSound(&soundGrindDoubleJump);
+        }
+    }
+
+    // Sonic & Knuckles (pun intended) Wall Jump
+    if (currentPlayerType == Player.PlayerType.Sonic || currentPlayerType == Player.PlayerType.Knuckles)
+    {
+        if ((Player.State.GetCurrentStateID<Sonic.StateID>() == Sonic.StateID.StateBaseJump ||
+             Player.State.GetCurrentStateID<Knuckles.StateID>() == Knuckles.StateID.StateBaseJump) &&
+            (Player.State.GetPreviousStateID<Sonic.StateID>() != Sonic.StateID.StateBaseJump &&
+             Player.State.GetPreviousStateID<Knuckles.StateID>() != Knuckles.StateID.StateBaseJump))
+        {
+            if (!isBoostWallJump)
+            {
+                Player.Sound.PlaySound("sn_spin");
+                Player.Sound.PlaySound("sn_jump");
+                Player.Sound.PlaySound("sn_windmill_kick");
+                Lua.Call("PlayVoice", "sa1007"); 
+                isBoostWallJump = true;
+            }
+        }
+        else if ((Player.State.GetCurrentStateID<Sonic.StateID>() != Sonic.StateID.StateBaseJump &&
+                  Player.State.GetCurrentStateID<Knuckles.StateID>() != Knuckles.StateID.StateBaseJump))
+        {
+            isBoostWallJump = false;
+        }
+
+        if ((Player.State.GetCurrentStateID<Sonic.StateID>() != Sonic.StateID.StateBaseJump &&
+             Player.State.GetPreviousStateID<Sonic.StateID>() == Sonic.StateID.StateBaseJump) ||
+            (Player.State.GetCurrentStateID<Knuckles.StateID>() != Knuckles.StateID.StateBaseJump &&
+             Player.State.GetPreviousStateID<Knuckles.StateID>() == Knuckles.StateID.StateBaseJump))
+        {
+            int soundBoostWallJump = Player.Sound.PlaySound("sn_spin");
+            Player.Sound.StopSound(&soundBoostWallJump);
+        }
+    }
+}
+
+// Spin States
+if (conJumpSpinSound == 2)
+{
+    var currentPlayerType = Player.GetPlayerType();
+
+    if (currentPlayerType == Player.PlayerType.Sonic || currentPlayerType == Player.PlayerType.Knuckles)
+    {
+        var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+        var previousState = Player.State.GetPreviousStateID<Sonic.StateID>();
+
+        if (_jumpSpinSoundStates.Contains(currentState) && !_jumpSpinSoundStates.Contains(previousState))
+        {
+            if (!isSpinState)
+            {
+                Player.Sound.PlaySound("sn_spin");
+                isSpinState = true;
+            }
+        }
+        else if (!_jumpSpinSoundStates.Contains(currentState))
+        {
+            isSpinState = false;
+        }
+
+        if (!_jumpSpinSoundStates.Contains(currentState) && _jumpSpinSoundStates.Contains(previousState))
+        {
+            bool handOffToJumpBallSound =
+                currentState == Sonic.StateID.StateBounceJump ||
+                (currentState == Sonic.StateID.StateJump &&
+                 (previousState == Sonic.StateID.StateSpinBoost ||
+                  previousState == Sonic.StateID.StateDriftDash ||
+                  previousState == Sonic.StateID.StateDropDash ||
+                  previousState == Sonic.StateID.StateSpin));
+
+            if (!handOffToJumpBallSound)
+            {
+                int soundSpinState = Player.Sound.PlaySound("sn_spin");
+                Player.Sound.StopSound(&soundSpinState);
+            }
+        }
+    }
+}
+
+// Disable sn_spin
+else if (conJumpSpinSound == 3)
+{
+    if (Player.GetPlayerType() == Player.PlayerType.Sonic || Player.GetPlayerType() == Player.PlayerType.Knuckles)
+    {
+        if ((Player.State.GetCurrentStateID<Sonic.StateID>() == Sonic.StateID.StateBaseJump ||
+             Player.State.GetCurrentStateID<Knuckles.StateID>() == Knuckles.StateID.StateBaseJump) &&
+            (Player.State.GetPreviousStateID<Sonic.StateID>() != Sonic.StateID.StateBaseJump &&
+             Player.State.GetPreviousStateID<Knuckles.StateID>() != Knuckles.StateID.StateBaseJump))
+        {
+            if (!isBoostWallJump)
+            {
+                Player.Sound.PlaySound("sn_jump");
+                Player.Sound.PlaySound("sn_windmill_kick");
+                Lua.Call("PlayVoice", "sa1007"); 
+                isBoostWallJump = true;
+            }
+        }
+        else
+        {
+            isBoostWallJump = false;
+        }
+    }
+}
+
+Code "Flying Sound in Stomping - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Plays Tails' flying sound during stomping animation
+
+#include "Reflection" noemit
+#include "BlackboardStatus" noemit
+
+#lib "Player"
+#lib "Tails"
+
+#import "States"
+
+#load "System.Numerics.dll"
+
+using System.Numerics;
+
+// State tracking
+static bool isTailSpin = false;
+static int soundHandle = 0;
+
+{
+    // Early exit if not Tails
+    if (Player.GetPlayerType() != Player.PlayerType.Tails)
+        return;
+
+    // Cache state checks
+    var currentState = Player.State.GetCurrentStateID<Tails.StateID>();
+    var previousState = Player.State.GetPreviousStateID<Tails.StateID>();
+
+    // Entering stomping state
+    if (currentState == Tails.StateID.TailsStateStompingDown &&
+        previousState != Tails.StateID.TailsStateStompingDown)
+    {
+        if (!isTailSpin)
+        {
+            soundHandle = Player.Sound.PlaySound("ta_fly_loop");
+            isTailSpin = true;
+        }
+    }
+    // Exiting stomping state
+    else if (currentState != Tails.StateID.TailsStateStompingDown &&
+             previousState == Tails.StateID.TailsStateStompingDown)
+    {
+        if (isTailSpin)
+        {
+            fixed (int* pSoundHandle = &soundHandle)
+            {
+                Player.Sound.StopSound(pSoundHandle);
+            }
+            soundHandle = 0;
+            isTailSpin = false;
+        }
+    }
+}
+
+Code "Boost Sound Fixes (Tails & Amy) - UNIFIED OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Fixes Tails and Amy's boost sounds being missing during:
+// 1. Spin Dash Boost
+// 2. Max Ring Grind Boost
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Tails"
+#lib "Amy"
+#lib "BlackboardItem"
+
+#load "System.Numerics.dll"
+
+using System.Numerics;
+
+// Separate flags for each fix
+static bool isSpinBoostFixTails = false;
+static bool isSpinBoostFixAmy = false;
+static bool isGrindBoostFixTails = false;
+static bool isGrindBoostFixAmy = false;
+
+{
+    // Cache boost flag once
+    bool isBoost = IS_STATE_FLAG(IsBoost);
+    
+    // Cache player type once
+    var playerType = Player.GetPlayerType();
+
+    // Handle Tails fixes
+    if (playerType == Player.PlayerType.Tails)
+    {
+        // Cache state checks
+        var currentState = Player.State.GetCurrentStateID<Tails.StateID>();
+        var previousState = Player.State.GetPreviousStateID<Tails.StateID>();
+
+        // ===== FIX 1: SPIN DASH BOOST SOUND =====
+        
+        // Entering spin boost with boost active
+        if (currentState == Tails.StateID.StateSpinBoost &&
+            previousState != Tails.StateID.StateSpinBoost &&
+            isBoost)
+        {
+            if (!isSpinBoostFixTails)
+            {
+                Player.Sound.PlaySound("sn_boost_run");
+                isSpinBoostFixTails = true;
+            }
+        }
+        else
+        {
+            isSpinBoostFixTails = false;
+        }
+
+        // Exiting spin boost
+        if (currentState != Tails.StateID.StateSpinBoost &&
+            previousState == Tails.StateID.StateSpinBoost &&
+            !isBoost)
+        {
+            int soundBoostFix = Player.Sound.PlaySound("sn_boost_run");
+            Player.Sound.StopSound(&soundBoostFix);
+        }
+
+        // ===== FIX 2: MAX RING GRIND BOOST SOUND =====
+        
+        var pBlackboardItem = BlackboardItem.Get();
+        if (pBlackboardItem != null)
+        {
+            int maxrings = pBlackboardItem->RingCapacity;
+            int rings = pBlackboardItem->RingCount;
+
+            // Entering grind with max rings and boost active
+            if (currentState == Tails.StateID.StateGrind &&
+                previousState != Tails.StateID.StateGrind &&
+                isBoost && rings == maxrings)
+            {
+                if (!isGrindBoostFixTails)
+                {
+                    Player.Sound.PlaySound("sn_boost_run");
+                    isGrindBoostFixTails = true;
+                }
+            }
+            else
+            {
+                isGrindBoostFixTails = false;
+            }
+
+            // Exiting grind with max rings
+            if (currentState != Tails.StateID.StateGrind &&
+                previousState == Tails.StateID.StateGrind &&
+                !isBoost && rings == maxrings)
+            {
+                int soundBoostFix = Player.Sound.PlaySound("sn_boost_run");
+                Player.Sound.StopSound(&soundBoostFix);
+            }
+        }
+    }
+    // Handle Amy fixes
+    else if (playerType == Player.PlayerType.Amy)
+    {
+        // Cache state checks
+        var currentState = Player.State.GetCurrentStateID<Amy.StateID>();
+        var previousState = Player.State.GetPreviousStateID<Amy.StateID>();
+
+        // ===== FIX 1: SPIN DASH BOOST SOUND =====
+        
+        // Entering spin boost with boost active
+        if (currentState == Amy.StateID.StateSpinBoost &&
+            previousState != Amy.StateID.StateSpinBoost &&
+            isBoost)
+        {
+            if (!isSpinBoostFixAmy)
+            {
+                Player.Sound.PlaySound("sn_boost_run");
+                isSpinBoostFixAmy = true;
+            }
+        }
+        else
+        {
+            isSpinBoostFixAmy = false;
+        }
+
+        // Exiting spin boost
+        if (currentState != Amy.StateID.StateSpinBoost &&
+            previousState == Amy.StateID.StateSpinBoost &&
+            !isBoost)
+        {
+            int soundBoostFix = Player.Sound.PlaySound("sn_boost_run");
+            Player.Sound.StopSound(&soundBoostFix);
+        }
+
+        // ===== FIX 2: MAX RING GRIND BOOST SOUND =====
+        
+        var pBlackboardItem = BlackboardItem.Get();
+        if (pBlackboardItem != null)
+        {
+            int maxrings = pBlackboardItem->RingCapacity;
+            int rings = pBlackboardItem->RingCount;
+
+            // Entering grind with max rings and boost active
+            if (currentState == Amy.StateID.StateGrind &&
+                previousState != Amy.StateID.StateGrind &&
+                isBoost && rings == maxrings)
+            {
+                if (!isGrindBoostFixAmy)
+                {
+                    Player.Sound.PlaySound("sn_boost_run");
+                    isGrindBoostFixAmy = true;
+                }
+            }
+            else
+            {
+                isGrindBoostFixAmy = false;
+            }
+
+            // Exiting grind with max rings
+            if (currentState != Amy.StateID.StateGrind &&
+                previousState == Amy.StateID.StateGrind &&
+                !isBoost && rings == maxrings)
+            {
+                int soundBoostFix = Player.Sound.PlaySound("sn_boost_run");
+                Player.Sound.StopSound(&soundBoostFix);
+            }
+        }
+    }
+}
+
+Code "Super Sonic Wait Grunt - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Adds a grunt to Super Sonic when he waits after taking damage
+
+#lib "Player"
+#lib "Lua"
+
+#import "Postures"
+#import "Services"
+
+// State tracking
+static bool isSuperWait = false;
+
+{
+    // Early exit if not Sonic
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+
+    // Get posture
+    var pPostureDamageBlowOffHeavy = Player.Posture.GetPosture<PostureDamageBlowOffHeavy>();
+    if (pPostureDamageBlowOffHeavy == null)
+        return;
+
+    // Check if in wait phase
+    if (pPostureDamageBlowOffHeavy->Phase == PostureDamageBlowOffHeavy.PhaseType.Wait)
+    {
+        if (!isSuperWait)
+        {
+            Lua.Call("PlayVoice", "sa1014_1");
+            isSuperWait = true;
+        }
+    }
+    else
+    {
+        isSuperWait = false;
+    }
+}
+
+Code "Super Sonic Release Sound - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Adds a sound when Super Sonic returns to the arena
+
+#lib "Player"
+
+#import "Postures"
+#import "Services"
+
+// State tracking
+static bool isSuperBack = false;
+
+{
+    // Early exit if not Sonic
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+
+    // Get posture
+    var pPostureDamageBlowOffHeavy = Player.Posture.GetPosture<PostureDamageBlowOffHeavy>();
+    if (pPostureDamageBlowOffHeavy == null)
+        return;
+
+    // Check if in release phase
+    if (pPostureDamageBlowOffHeavy->Phase == PostureDamageBlowOffHeavy.PhaseType.Release)
+    {
+        if (!isSuperBack)
+        {
+            Player.Sound.PlaySound("sn_just_avoid_accel");
+            isSuperBack = true;
+        }
+    }
+    else
+    {
+        isSuperBack = false;
+    }
+}
+
+Code "Somersault when hitting terrain - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Plays a somersault sound when hitting terrain
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Sonic"
+#lib "Lua"
+
+#load "System.Numerics.dll"
+
+using System.Numerics;
+
+// State tracking
+static bool SomersaultFlip = false;
+
+{
+    // Check if in fall flip state
+    if (Player.State.GetCurrentStateID<Sonic.StateID>() == Sonic.StateID.StateFallFlip)
+    {
+        if (!SomersaultFlip)
+        {
+            Player.Sound.PlaySound("sn_windmill_kick");
+            Lua.Call("PlayVoice", "sa1001");
+            SomersaultFlip = true;
+        }
+    }
+    else
+    {
+        SomersaultFlip = false;
+    }
+}
+
+Code "Somersault when hitting wall terrain - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Plays a somersault sound when hitting terrain as Sonic or Knuckles
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Sonic"
+#lib "Knuckles"
+
+#load "System.Numerics.dll"
+
+using System.Numerics;
+
+// State tracking
+static bool SomersaultWall = false;
+
+{
+    // Early exit if not Sonic or Knuckles
+    var playerType = Player.GetPlayerType();
+    if (playerType != Player.PlayerType.Sonic && playerType != Player.PlayerType.Knuckles)
+        return;
+
+    // Check wall leave state
+    bool isWallLeave = false;
+    if (playerType == Player.PlayerType.Sonic)
+        isWallLeave = Player.State.GetCurrentStateID<Sonic.StateID>() == Sonic.StateID.StateWallLeave;
+    else
+        isWallLeave = Player.State.GetCurrentStateID<Knuckles.StateID>() == Knuckles.StateID.StateWallLeave;
+
+    if (isWallLeave)
+    {
+        if (!SomersaultWall)
+        {
+            Player.Sound.PlaySound("sn_windmill_kick");
+            Player.Sound.PlaySound("sa1001");
+            SomersaultWall = true;
+        }
+    }
+    else
+    {
+        SomersaultWall = false;
+    }
+}
+
+Code "Boost Sound for Sonic's Drift - OPTIMIZED" by "Batman Sonic & SuperNova124"
+// Adds a boost sound when pressing the Boost input during a Drift
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Sonic"
+
+static bool driftBoostActive = false;
+static bool boostWasHeldLastFrame = false;
+static int driftBoostHandle = -1;
+
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+
+    var currentState  = Player.State.GetCurrentStateID<Sonic.StateID>();
+    var previousState = Player.State.GetPreviousStateID<Sonic.StateID>();
+
+    bool isDrift     = currentState == Sonic.StateID.StateDrift;
+    bool isBoostDown = Player.Input.IsDown(Player.InputActionType.PlayerBoost);
+
+    // Detect entering drift
+    bool justEnteredDrift =
+        currentState == Sonic.StateID.StateDrift &&
+        previousState != Sonic.StateID.StateDrift;
+
+    // If we entered drift while boost was already held,
+    // block sound until boost is released once
+    if (justEnteredDrift && boostWasHeldLastFrame)
+    {
+        driftBoostActive = true; // Prevent playback
+    }
+
+    // Play only on fresh press during drift
+    if (isDrift && isBoostDown && !boostWasHeldLastFrame && !driftBoostActive)
+    {
+        driftBoostHandle = Player.Sound.PlaySound("sn_boost_run");
+        driftBoostActive = true;
+    }
+
+    // Stop when releasing boost or leaving drift
+    if (driftBoostActive && (!isDrift || !isBoostDown))
+    {
+        int driftBoostHandle = Player.Sound.PlaySound("sn_boost_run");
+		Player.Sound.StopSound(&driftBoostHandle);
+        driftBoostActive = false;
+    }
+
+    // Update input memory
+    boostWasHeldLastFrame = isBoostDown;
+}
+
+Code "Boost Sound for Skateboard" by "Batman Sonic & SuperNova124"
+//
+
+#include "Reflection" noemit
+
+#lib "Player"
+#lib "Sonic"
+
+#import "Plugins"
+
+static bool boardingBoostActive = false;
+static int boardingBoostHandle = 0;
+
+{
+    if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+        return;
+
+    var boostPlugin = Player.State.GetStatePlugin<StatePluginBoost>();
+
+    if (boostPlugin == null)
+        return;
+
+    var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+
+    bool hasBoostEnergy = (boostPlugin->Flags & StatePluginBoost.BoostFlags.IsGaugeEmpty) == 0 &&
+                          boostPlugin->BoostAmount > 0.01f;
+
+    bool isBoostBoarding = currentState == Sonic.StateID.StateBoarding && Player.Input.IsDown(Player.InputActionType.PlayerBoost) && hasBoostEnergy && !IS_WORLD_FLAG(IsDamagedOrRepelled);
+
+    if (isBoostBoarding)
+    {
+        if (!boardingBoostActive)
+        {
+            boardingBoostHandle = Player.Sound.PlaySound("sn_boost_run");
+            boardingBoostActive = true;
+        }
+    }
+    else if (boardingBoostActive)
+    {
+        if (boardingBoostHandle != 0)
+        {
+            int soundHandle = boardingBoostHandle;
+            Player.Sound.StopSound(&soundHandle);
+            boardingBoostHandle = 0;
+        }
+
+        boardingBoostActive = false;
+    }
+}
+
+Code "Consistent Spin Slash Sound" by "Batman Sonic & SuperNova124"
+//Spin Slash sound depends on your current Spin Dash sound preset
+
+#include "Reflection" noemit
+#include "BlackboardStatus" noemit
+
+#lib "Player"
+#lib "Time"
+#lib "HMM"
+
+#import "States"
+
+// 0 = idle, 1 = playing charge, 3 = done
+static int spinSlashSoundPhase = 0;
+static float spinSlashSoundTimer = 0.0f;
+
+static int spinSlashChargeHandle = 0;
+
+// Check if Sound Overhaul Pack is active (static, checked once)
+static bool? sopCheckCache = null;
+
+{
+    // Check SOP mod once
+    if (sopCheckCache == null)
+    {
+        sopCheckCache = HMM.GetModByID("frontiers.sound-overhaul-pack") != null;
+    }
+
+    // Exit early if SOP is active
+    if (sopCheckCache == true)
+        return;
+
+    var currentState = Player.State.GetCurrentStateID<Sonic.StateID>();
+
+    if (currentState == Sonic.StateID.StateSpinSlash)
+    {
+        bool isSuper = BlackboardStatus.IsSuper();
+        float duration = isSuper ? 0.45f : 1.0f;
+
+        spinSlashSoundTimer += Time.GetDeltaTime();
+
+        if (spinSlashSoundPhase == 0)
+        {
+            spinSlashChargeHandle = Player.Sound.PlaySound("sn_spinboost_charge");
+            spinSlashSoundPhase   = 1;
+        }
+        else if (spinSlashSoundPhase == 1 && spinSlashSoundTimer >= duration)
+        {
+            int chargeHandle = spinSlashChargeHandle;
+            Player.Sound.StopSound(&chargeHandle);
+            spinSlashChargeHandle = 0;
+
+            spinSlashSoundPhase = 3;
+        }
+    }
+    else
+    {
+        if (spinSlashSoundPhase == 1)
+        {
+            int chargeHandle = spinSlashChargeHandle;
+            Player.Sound.StopSound(&chargeHandle);
+            spinSlashChargeHandle = 0;
+        }
+
+        spinSlashSoundPhase = 0;
+        spinSlashSoundTimer = 0.0f;
+    }
+}

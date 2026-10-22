@@ -1,0 +1,177 @@
+Code "Hammer Spawn" by "Angryzor"
+//  
+#include "Helpers" noemit
+#include "BlackboardStatus" noemit
+#lib "GameObject"
+#lib "Player"
+#include "Reflection" noemit
+#import "Plugins"
+using System.Runtime.InteropServices;
+
+FUNCTION_PTR(void, GOCVisualSetVisibility, 0x140CFEED0, GOCVisual* component, bool visible);
+
+[StructLayout(LayoutKind.Explicit, Size = 0x80)]
+public struct GOComponentWithNameHash
+{
+    [FieldOffset(0x28)] public GameObject.Data* pGameObject;
+    [FieldOffset(0x3C)] public uint nameHash;
+    [FieldOffset(0x48)] public GOComponents.GOComponentStaticClass* pStaticClass;
+}
+
+[StructLayout(LayoutKind.Explicit, Size = 0x88)]
+public struct GOCVisual
+{
+    [FieldOffset(0)] public GOComponentWithNameHash Base;
+
+    public void SetVisibility(bool visible) {
+        fixed (GOCVisual* pThis = &this) {
+            GET_FUNCTION_PTR(GOCVisualSetVisibility)(pThis, visible);
+        }
+    }
+}
+
+public GOComponentWithNameHash* GetGOCByNameHashRaw(GameObject.Data* gameObject, uint nameHash)
+{
+    if (gameObject == null)
+        return null;
+
+    var components = gameObject->Components;
+
+    for (int i = 0; i < components.Length; i++) {
+        var pComponent = (GOComponentWithNameHash*)components[i].pData;
+        
+        if (pComponent->nameHash == nameHash)
+            return pComponent;
+    }
+
+    return null;
+}
+
+public T* GetGOCByNameHash<T>(GameObject.Data* gameObject, uint nameHash) where T : unmanaged
+{
+    return (T*)(long)GetGOCByNameHashRaw(gameObject, nameHash);
+}
+
+static bool Bool1 = false;
+static Player.PlayerType _currentPlayer;
+
+static bool IsConfigInitialized = false;
+static int conShowHammer = 0;
+static int conHammerStomp = 0;
+static int conHammerAttack = 0;
+static int conHammerJump = 0;
+static int conHammerJumpAttack = 0;
+static int conHammerRush = 0;
+
+List<Amy.StateID> QuickStepStates = new List<Amy.StateID>
+{
+    Amy.StateID.StateLeftStep,
+    Amy.StateID.StateLeftStepRun,
+    Amy.StateID.StateRightStep,
+    Amy.StateID.StateRightStepRun,
+    Amy.StateID.StateQuickStepLeft,
+    Amy.StateID.StateQuickStepRight,
+    Amy.StateID.StateQuickStepRoot,
+};
+
+bool isQuickStepStates = QuickStepStates.Contains(Player.State.GetCurrentStateID<Amy.StateID>());
+
+// Initialize configuration if not already done
+if (!IsConfigInitialized)
+{
+    var modsQuery = HMM.FindModsByName("Quality of Life Additions");
+    if (modsQuery.Count == 1)
+    {
+        string modConfigIniPath = System.IO.Path.Combine(modsQuery[0].Path, "mod.ini");
+        var ini = INI.Read(modConfigIniPath);
+
+        conShowHammer = INI.Parse<int>(ini["Main"]["ShowHammer"], conShowHammer);
+        conHammerStomp = INI.Parse<int>(ini["Main"]["HammerStomp"], conHammerStomp);
+		conHammerAttack = INI.Parse<int>(ini["Main"]["HammerAttack"], conHammerAttack);
+		conHammerJump = INI.Parse<int>(ini["Main"]["HammerJump"], conHammerJump);
+		conHammerJumpAttack = INI.Parse<int>(ini["Main"]["HammerJumpAttack"], conHammerJumpAttack);
+		conHammerRush = INI.Parse<int>(ini["Main"]["HammerRush"], conHammerRush);
+
+        IsConfigInitialized = true;
+    }
+}
+
+{
+    float speed = Player.Kinematics.GetHorizontalMagnitude();
+    var hammerVisualNameHash = 0x006706e6u;
+    var playerObject = (GameObject.Data*)Player.GetPlayerData();
+
+    // Determine if hammer should be visible
+    Amy.StateID currentState = Player.State.GetCurrentStateID<Amy.StateID>();
+    Amy.StateID previousState = Player.State.GetPreviousStateID<Amy.StateID>();
+
+    bool isStandardHammerState =
+        currentState == Amy.StateID.StateAirCyHammer ||
+        currentState == Amy.StateID.StateCyHammer ||
+        currentState == Amy.StateID.StateParry ||
+        currentState == Amy.StateID.StateParryStand ||
+        currentState == Amy.StateID.StateHomingFinished ||
+		currentState == Amy.StateID.AmyStateTarotBoostAir ||
+		currentState == Amy.StateID.AmyStateTarotBikeRoot ||
+		currentState == Amy.StateID.AmyStateTarotBuildRoot ||
+		currentState == Amy.StateID.AmyStateTarotBuild ||
+		currentState == Amy.StateID.AmyStateTarotBuildAir ||
+		currentState == Amy.StateID.AmyStateTarotBuildFall ||
+		currentState == Amy.StateID.AmyStateTarotBoostRoot ||
+		currentState == Amy.StateID.AmyStateTarotBoost ||
+		currentState == Amy.StateID.AmyStateTarotBoostTurn ||
+		currentState == Amy.StateID.AmyStateTarotBoostStep ||
+		currentState == Amy.StateID.AmyStateTarotBoostJump ||
+		currentState == Amy.StateID.AmyStateTarotBoostFall ||
+		currentState == Amy.StateID.AmyStateTarotDrift;
+
+    bool isConditionalHammerState = conShowHammer != 2 && (speed >= 16.0 && (currentState == Amy.StateID.StateRun || currentState == Amy.StateID.StateRunningStart ||isQuickStepStates)));
+
+    bool isStompEnabledState = conHammerStomp != 3 && (currentState == Amy.StateID.AmyStateStomping || currentState == Amy.StateID.AmyStateStompingDown || currentState == Amy.StateID.AmyStateStompingBounce);
+	
+    bool isStompLandEnabledState = conHammerStomp == 1 && currentState == Amy.StateID.AmyStateStompingLand;
+
+    bool isAttackEnabledState = conHammerAttack == 1 && (currentState == Amy.StateID.StateSliding ||
+                                                         currentState == Amy.StateID.StateTarotAttack ||
+                                                         currentState == Amy.StateID.StateTarotAttack2 ||
+                                                         currentState == Amy.StateID.StateAcceleCombo1 ||
+                                                         currentState == Amy.StateID.StateAcceleCombo2 ||
+                                                         currentState == Amy.StateID.StateRunawayBee ||
+                                                         currentState == Amy.StateID.AmyStateTarotRolling);
+
+    bool isHammerJumpEnabledState = conHammerJump != 3 && (currentState == Amy.StateID.StateAwakening);
+
+    bool isHammerJumpAttackEnabledState = conHammerJumpAttack == 1 && (currentState == Amy.StateID.StateDoubleJump || (currentState == Amy.StateID.StateGrindDoubleJump && previousState == Amy.StateID.StateSpinAttack));
+
+    bool isHammerRushEnabledState = (conHammerRush == 2 && currentState == Amy.StateID.StateRun && IS_STATE_FLAG(IsBoost)) || (conHammerRush == 1 && (currentState == Amy.StateID.StateSpinDash || (!Player.Status.IsGrounded() && currentState == Amy.StateID.StateSpinBoostCharge)));
+
+    bool HammerSpawn = isStandardHammerState || isConditionalHammerState || isStompEnabledState || isStompLandEnabledState || isAttackEnabledState || isHammerJumpEnabledState || isHammerJumpAttackEnabledState || isHammerRushEnabledState;
+
+    _currentPlayer = Player.PlayerType.Amy;
+
+    if (playerObject != null)
+    {
+        var hammerGOC = GetGOCByNameHash<GOCVisual>(playerObject, hammerVisualNameHash);
+        if (hammerGOC != null)
+        {
+            hammerGOC->SetVisibility(HammerSpawn);
+        }
+
+        if (HammerSpawn)
+        {
+            Bool1 = true;
+        }
+    }
+
+    if (!HammerSpawn && Bool1 && currentState == Amy.StateID.StateStand)
+    {
+        Player.SetPlayerType(_currentPlayer);
+        Bool1 = false;
+    }
+}
+
+Patch "Don't detach hammer" by "angryzor"
+{
+    WriteProtected<byte>(0x14092998B, 0xC3);
+    WriteNop(0x14093B2ED, 5);
+}

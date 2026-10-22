@@ -1,0 +1,307 @@
+Library "GameSkillParameter"
+{
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Runtime.InteropServices;
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x03)]
+    public struct SkillParam
+    {
+        [FieldOffset(0x00)] public byte unlockPoint;
+        [FieldOffset(0x01)] public byte addUnlockPoint;
+        [FieldOffset(0x02)] public bool present;
+    }
+
+    public enum Value : sbyte
+    {
+        BeginSonicSkill = 0,
+        Cyloop = 0,
+        Smash = 1,
+        QuickCyloop = 2,
+        AcceleLevel = 3,
+        ChargeAttack = 4,
+        RecoverySmash = 5,
+        AirTrick = 6,
+        SonicBoom = 7,
+        Crasher = 8,
+        LoopKick = 9,
+        SpinSlash = 10,
+        StompingAttack = 11,
+        HomingShot = 12,
+        CrossSlash = 13,
+        AutoCombo = 14,
+        NumUsed = 15,
+        Dummy0 = 15,
+        CrossSlash2 = 15,
+        Dummy1 = 16,
+        Dummy2 = 17,
+        Dummy3 = 18,
+        Dummy4 = 19,
+        Num = 20,
+        BeginAmySkill = 20,
+        AmyJump = 20,
+        AmyPropellerJump = 21,
+        AmyHomingAtatck = 22,
+        AmyBoost = 23,
+        AmyPowerBoost = 24,
+        AmyTarotAttack = 25,
+        AmyTarotRolling = 26,
+        AmyCharmAttack = 27,
+        AmyStomp = 28,
+        AmyHighJump = 29,
+        AmyCyHammer = 30,
+        AmyTarotRollingInfinity = 31,
+        AmySpinDash = 32,
+        AmyParry = 33,
+        AmyParryDebuff = 34,
+        AmyCyloop = 35,
+        AmyDoubleJump = 36,
+        AmyNumUsed = 37,
+        AmyDummy0 = 37,
+        AmyDummy1 = 38,
+        AmyDummy2 = 39,
+        AmyNum = 40,
+        BeginKnucklesSkill = 40,
+        KnucklesJump = 40,
+        KnucklesGliding = 41,
+        KnucklesHomingAtatck = 42,
+        KnucklesBoost = 43,
+        KnucklesWallRun = 44,
+        KnucklesPowerBoost = 45,
+        KnucklesComboAttack = 46,
+        KnucklesMaximumHeatKnuckle = 47,
+        KnucklesStomp = 48,
+        KnucklesCyKnuckle = 49,
+        KnucklesGlidingInfinity = 50,
+        KnucklesSpinDash = 51,
+        KnucklesParry = 52,
+        KnucklesDoubleJump = 53,
+        KnucklesParryDebuff = 54,
+        KnucklesCyloop = 55,
+        KnucklesNumUsed = 56,
+        KnucklesDummy0 = 56,
+        KnucklesDummy1 = 57,
+        KnucklesDummy2 = 58,
+        KnucklesDummy3 = 59,
+        KnucklesNum = 60,
+        BeginTailsSkill = 60,
+        TailsJump = 60,
+        TailsFly = 61,
+        TailsHomingAtatck = 62,
+        TailsBoost = 63,
+        TailsPowerBoost = 64,
+        TailsSpannerAttack = 65,
+        TailsChargeSpanner = 66,
+        TailsStomp = 67,
+        TailsCyBlaster = 68,
+        TailsCycloneCannon = 69,
+        TailsSpinDash = 70,
+        TailsParry = 71,
+        TailsDoubleJump = 72,
+        TailsParryDebuff = 73,
+        TailsCyloop = 74,
+        TailsNumUsed = 75,
+        TailsDummy0 = 75,
+        TailsDummy1 = 76,
+        TailsDummy2 = 77,
+        TailsDummy3 = 78,
+        TailsDummy4 = 79,
+        TailsNum = 80,
+        AllNum = 80,
+        Invalid = -1
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x03)]
+    public struct SkillLinkSetting
+    {
+        [FieldOffset(0x00)] public bool down;
+        [FieldOffset(0x01)] public bool left;
+        [FieldOffset(0x02)] public bool right;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x05)]
+    public struct SkillNodeParam
+    {
+        [FieldOffset(0x00)] public bool enable;
+        [FieldOffset(0x01)] public Value skill;
+        [FieldOffset(0x02)] public SkillLinkSetting link;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x97)]
+    public struct SkillTreeParam
+    {
+        [FieldOffset(0x00)] public unsafe fixed byte /* SkillNodeParam[30] */ _nodeParams[150];
+
+        public unsafe SkillNodeParam* nodeParams
+        {
+            get
+            {
+                fixed (byte* p_nodeParams = _nodeParams)
+                    return (SkillNodeParam*)p_nodeParams;
+            }
+        }
+
+        [FieldOffset(0x96)] public sbyte startIndex;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x34C)]
+    public struct Root
+    {
+        [FieldOffset(0x00)] public unsafe fixed byte /* SkillParam[80] */ _skillParams[240];
+
+        public unsafe SkillParam* skillParams
+        {
+            get
+            {
+                fixed (byte* p_skillParams = _skillParams)
+                    return (SkillParam*)p_skillParams;
+            }
+        }
+
+        [FieldOffset(0xF0)] public SkillTreeParam treeParams;
+        [FieldOffset(0x187)] public SkillTreeParam treeParamsAmy;
+        [FieldOffset(0x21E)] public SkillTreeParam treeParamsKnuckles;
+        [FieldOffset(0x2B5)] public SkillTreeParam treeParamsTails;
+    }
+
+}
+
+Library "StandardCameraConfig"
+{
+    #load "System.Numerics.dll"
+
+    using System.Numerics;
+    using System.Runtime.InteropServices;
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x68)]
+    public struct StandardCameraCommonParameter
+    {
+        [FieldOffset(0x00)] public float distance;
+        [FieldOffset(0x04)] public float distanceSuspensionK;
+        [FieldOffset(0x08)] public float minElevation;
+        [FieldOffset(0x0C)] public float maxElevation;
+        [FieldOffset(0x10)] public float azimuthSensitivity;
+        [FieldOffset(0x14)] public float elevationUpSensitivity;
+        [FieldOffset(0x18)] public float elevationDownSensitivity;
+        [FieldOffset(0x1C)] public float elevationOffset;
+        [FieldOffset(0x20)] public float targetUpOffset;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x30)]
+    public struct StandardCameraDashParameter
+    {
+        [FieldOffset(0x00)] public float minDistance;
+        [FieldOffset(0x04)] public float maxDistance;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x2B0)]
+    public struct Root
+    {
+        [FieldOffset(0x00)] public StandardCameraCommonParameter common;
+        [FieldOffset(0x68)] public StandardCameraDashParameter dash;
+    }
+}
+
+Library "CyberCorruption" by "Batman Sonic, AggroNova"
+{
+    #lib "Player"
+
+    private static long AddressLANDING_WEAK = 0;
+    private static long AddressLANDING_STRONG = 0;
+    private static long AddressIDLE_WEAK = 0;
+    private static long AddressIDLE_STRONG = 0;
+
+    // Written by the hooks, statics stay put so the address is safe.
+    private static byte CorruptionWEAK = 0;
+    private static byte CorruptionSTRONG = 0;
+
+    private static bool wasStanding = false;
+    private static bool standWasCorrupted = false;
+
+    // 0 = clean, 1 = weak, 2 = strong.
+    public static int Level = 0;
+
+    // Safe to call from more than one code per frame, the second call finds nothing new.
+    public static void Update()
+    {
+        if (AddressLANDING_WEAK == 0)
+        {
+            /* 0x140830C7D */ AddressLANDING_WEAK = ScanSignature("\x74\x15\xB8\x04\x00\x00\x00\x48\x8B\x5C\x24\x30", "xxxxxxxxxxxx");
+
+            if (AddressLANDING_WEAK == 0)
+                return;
+
+            fixed (byte* p = &CorruptionWEAK)
+                WriteAsmHook($"push rax \n mov rax, {(long)p} \n mov byte ptr [rax], 1 \n pop rax", AddressLANDING_WEAK + 2, HookBehavior.Before);
+        }
+
+        if (AddressLANDING_STRONG == 0)
+        {
+            /* 0x140830CA8 */ AddressLANDING_STRONG = ScanSignature("\xBA\x05\x00\x00\x00\x0F\x45\xCA\x8B\xC1", "xxxxxxxxxx");
+
+            if (AddressLANDING_STRONG == 0)
+                return;
+
+            // Picked by the cmovne after this, so only count it when ZF lets the move through.
+            fixed (byte* p = &CorruptionSTRONG)
+                WriteAsmHook($"push rax \n jz skip \n mov rax, {(long)p} \n mov byte ptr [rax], 1 \n skip: \n pop rax", AddressLANDING_STRONG, HookBehavior.Before);
+        }
+
+        if (AddressIDLE_WEAK == 0)
+        {
+            /* 0x140830DB4 */ AddressIDLE_WEAK = ScanSignature("\x74\x15\xB8\x0B\x00\x00\x00", "xxxxxxx");
+
+            if (AddressIDLE_WEAK == 0)
+                return;
+
+            fixed (byte* p = &CorruptionWEAK)
+                WriteAsmHook($"push rax \n mov rax, {(long)p} \n mov byte ptr [rax], 1 \n pop rax", AddressIDLE_WEAK + 2, HookBehavior.Before);
+        }
+
+        if (AddressIDLE_STRONG == 0)
+        {
+            /* 0x140830DDA */ AddressIDLE_STRONG = ScanSignature("\x74\x15\xB8\x0C\x00\x00\x00", "xxxxxxx");
+
+            if (AddressIDLE_STRONG == 0)
+                return;
+
+            fixed (byte* p = &CorruptionSTRONG)
+                WriteAsmHook($"push rax \n mov rax, {(long)p} \n mov byte ptr [rax], 1 \n pop rax", AddressIDLE_STRONG + 2, HookBehavior.Before);
+        }
+
+        if (Player.GetPlayerType() != Player.PlayerType.Sonic)
+            return;
+
+        bool isStanding = Player.State.GetCurrentStateID<Sonic.StateID>() == Sonic.StateID.StateStandRoot;
+
+        if (isStanding && !wasStanding)
+            standWasCorrupted = false;
+
+        if (CorruptionSTRONG != 0)
+        {
+            Level = 2;
+            standWasCorrupted = true;
+        }
+        else if (CorruptionWEAK != 0)
+        {
+            Level = 1;
+            standWasCorrupted = true;
+        }
+
+        CorruptionWEAK = 0;
+        CorruptionSTRONG = 0;
+
+        // Checked on the way out so the game has already picked its idle by then.
+        if (wasStanding && !isStanding && !standWasCorrupted)
+            Level = 0;
+
+        wasStanding = isStanding;
+    }
+}
+
+Library "TailsSwipeShared" by "Batman Sonic"
+{
+    // Tail Swipe owns Tails' animation while this is set; other Tails codes must not override it
+    public static bool IsGroundSwipeActive = false;
+}
