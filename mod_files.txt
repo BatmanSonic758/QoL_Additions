@@ -2,7 +2,6 @@ add ExtraSounds_QoL.hmm
 add HammerSpawn.hmm
 add HMM_Codes.hmm
 add HMM_Libraries.hmm
-add mod.ini
 add main/raw/character/amyP.pac
 add main/raw/character/knucklesP.pac
 add main/raw/character/sonic.pac
@@ -18,6 +17,7 @@ add main/raw/sound/sonic_sound/se_rangers_player_sonic.acb
 add main/raw/sound/tails_sound/se_rangers_player_tails.acb
 add main/raw/stage/CyberCommon.pac
 add main_assets.rar
+add mod.ini
 add QoL.hmm
 add QoLOptions.json
 add SpinDashSkill.hmm
