@@ -2,6 +2,7 @@ add ExtraSounds_QoL.hmm
 add HammerSpawn.hmm
 add HMM_Codes.hmm
 add HMM_Libraries.hmm
+add mod.ini
 add main/raw/character/amyP.pac
 add main/raw/character/knucklesP.pac
 add main/raw/character/sonic.pac
