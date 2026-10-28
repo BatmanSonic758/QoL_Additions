@@ -6,7 +6,7 @@
 
 - Edited Jumpball CEMTs and Fixed Spin Dash Glow Outline are now part of each character's directory.
 
-- Added a 0. Unmodded folder to the Add-Ons folder if you wish to revert these changes.
+- Added a 0. Unmodified folder to the Add-Ons folder if you wish to revert these changes.
 
 - Fixed the loud Grand Slam sound.
 
@@ -123,7 +123,7 @@
 
 
 
-## V Version 1.0 Update (Release!)
+## Version 1.0 Update (Release!)
 Dear playtesters,
 
 Thank you all so much for playtesting Quality of Life Additions!
