@@ -28,6 +28,8 @@
 
 - Fixed Tails' Tail Swipe not cancelling when interrupted (i.g. suddenly jumping or interacting with a spring).
 
+- Fixed boost being unused when empty and being refilled at the same frame.
+
 - Sonic's Spin Dash can now be properly unlocked via the Skill Tree.
 
 - Added compatibility with Always Unlocked Spin Dash, Rail Crouch and Homing Attack Trick Animations.
