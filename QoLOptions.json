@@ -302,15 +302,6 @@
                     "DefaultValue": "false"
                 },
                 {
-                    "Name": "CyberCorruptionAlt",
-                    "DisplayName": "Cyber Corruption Alterations",
-                    "Description": [
-                        "Alters Sonic’s running animations based on his current Cyber Corruption state."
-                    ],
-                    "Type": "bool",
-                    "DefaultValue": "false"
-                },
-                {
                     "Name": "CyberSpaceRun",
                     "DisplayName": "Customizable Running Cycle",
                     "Description": [
@@ -327,6 +318,15 @@
                     ],
                     "Type": "bool",
                     "DefaultValue": "false"
+                },
+                {
+                    "Name": "SuperSonicHitRing",
+                    "DisplayName": "Super Sonic Damage Ring Loss",
+                    "Description": [
+                        "Super Sonic would lose 20 rings upon taking damage during the Titan fights."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "true"
                 }
             ]
         },
@@ -452,6 +452,15 @@
                     "DefaultValue": 1
                 },
                 {
+                    "Name": "TailsSpinRunStop",
+                    "DisplayName": "Disable Running Tail Spin",
+                    "Description": [
+                        "Disables Tails' tail spin sound while running, making it only play when flying and if Grind Boost Animation is enabled."
+                    ],
+                    "Type": "bool",
+                    "DefaultValue": "false"
+                },
+                {
                     "Name": "TailsSpannerStop",
                     "DisplayName": "Disable Wrench Attack Skill [EXPERIMENTAL]",
                     "Description": [
@@ -492,6 +501,15 @@
                     ],
                     "Type": "bool",
                     "DefaultValue": "false"
+                },
+                {
+                    "Name": "DigAbility",
+                    "DisplayName": "Restore Digging",
+                    "Description": [
+                        "Semi-restores Knuckles' (supposedly) unused digging ability as evidenced by unused states and animations, reimagined to work akin to the Sonic Adventure games.\n\nKnuckles can get items by digging by unlike Cyloop or CyKnuckle, items are much rarer from digging.\n\nPress the B button to dig when:\n- Clinging to a wall\n- Crouching\n- During Heat Stomp landing (before Knuckles stops twirling)"
+                    ],
+                    "Type": "DigAbility",
+                    "DefaultValue": 1
                 }
             ]
         },
@@ -921,6 +939,36 @@
                 ]
             }
         ],
+        "DigAbility": [
+            {
+                "DisplayName": "Both",
+                "Value": "1",
+                "Description": [
+                    "Allows Knuckles to dig underground from walls and solid ground."
+                ]
+            },
+            {
+                "DisplayName": "Ground Dig Only",
+                "Value": "2",
+                "Description": [
+                    "Allows Knuckles to dig underground from solid ground."
+                ]
+            },
+            {
+                "DisplayName": "Wall Dig Only",
+                "Value": "3",
+                "Description": [
+                    "Allows Knuckles to dig underground from walls."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "4",
+                "Description": [
+                    "Disables Knuckles' digging."
+                ]
+            }
+        ],
         "KnucklesCombat": [
             {
                 "DisplayName": "Enable",
@@ -1026,8 +1074,15 @@
                 ]
             },
             {
-                "DisplayName": "Disable",
+                "DisplayName": "Enable (No Trail)",
                 "Value": "2",
+                "Description": [
+                    "Enables the Boost Aura, without the trail effects."
+                ]
+            },
+            {
+                "DisplayName": "Disable",
+                "Value": "3",
                 "Description": [
                     "Disables the Boost Aura.\n\nIf you wish to use a different boost aura, like Boost Aura P2, turn this option off."
                 ]

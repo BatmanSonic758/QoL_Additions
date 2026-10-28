@@ -24,3 +24,4 @@ delete sound_Sonic/raw/sound/sonic_sound/se_rangers_player_sonic.acb
 delete sound_Sonic_NoAirTricks/raw/sound/sonic_sound/se_rangers_player_sonic.acb
 delete main/raw/sound/birthday_sound/se_rangers_ud02_birthday.acb
 delete main/raw/general/resident_general/bgm.awb
+delete SpinDashSkill.hmm
